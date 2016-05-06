@@ -1,9 +1,11 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerClass.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Colossus.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlayerClass.cs" Line="49" Column="7" />
-      <File FileName="Assets\Scripts\EnemyClass.cs" Line="4" Column="38" />
+      <File FileName="Assets\Scripts\Colossus.cs" Line="29" Column="26" />
+      <File FileName="Assets\Scripts\Gate.cs" Line="13" Column="1" />
+      <File FileName="Assets\Scripts\PlayerClass.cs" Line="54" Column="23" />
+      <File FileName="Assets\Scripts\EnemyClass.cs" Line="18" Column="1" />
       <File FileName="Assets\Scripts\EntityClass.cs" Line="12" Column="35" />
     </Files>
   </MonoDevelop.Ide.Workbench>

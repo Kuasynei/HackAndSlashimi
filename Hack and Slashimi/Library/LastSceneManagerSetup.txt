@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/TestWorld.unity
+- path: Assets/Matt_TestWorld.unity
   isLoaded: 1
   isActive: 1
