@@ -6,21 +6,33 @@ public class PlayerClass : EntityClass {
 	[SerializeField] bool disableInput = false;
 	[SerializeField] bool debugMode = true;
 	[SerializeField] float maxHealth = 100;
-	[SerializeField] float acceleration = 10;
-	[SerializeField] float maxHorzSpeed = 10;
-	[SerializeField] float jumpDetectionLine = 1;
 
-	float maxJumps = 2; //Maximum number of jumps, two for double jump, 0 and you can't jump at all.
+	//Horizontal Movement
+	[SerializeField] float acceleration = 5;
+	[SerializeField] float maxHorzSpeed = 10;
+	[SerializeField] float slidingFactor = 3;
+
+	//Jumping
+	[SerializeField] float jumpPower = 2;
+	[SerializeField] float jumpDetectionLine = 0.6f;
+	[SerializeField] float airAccelDampener = 2;
+	[SerializeField] float maxJumps = 2; //Maximum number of jumps, two for double jump, 0 and you can't jump at all.
+	[SerializeField] float enhancedGravityFactorTM = 2;
+	[SerializeField] float bouncyHouseFactor = 2; //Increases jump power against weird angles that aren't straight up, to make them feel better to jump against.
+
+	float jumpsAvailable;
 	float hAxis;
 	float vAxis;
-
+	bool onGround;
 	Rigidbody rB;
-	List<ContactPoint[]> groundContacts = new List<ContactPoint[]> ();
+
+	List<ContactPoint> groundContacts = new List<ContactPoint> ();
 
 	// Use this for initialization
 	void Awake () {
 		health = maxHealth;
 		rB = GetComponent<Rigidbody> ();
+		jumpsAvailable = maxJumps;
 	}
 	
 	// Update is called once per frame
@@ -30,30 +42,79 @@ public class PlayerClass : EntityClass {
 		vAxis = Input.GetAxis ("Vertical");
 
 		if (debugMode) {
-			Debug.DrawRay (transform.position - Vector3.up * jumpDetectionLine, transform.right * 0.5f, Color.yellow);
-			Debug.DrawRay (transform.position - Vector3.up * jumpDetectionLine, -transform.right * 0.5f, Color.yellow);
+			//Any collisions the player makes below this line will count as "contact with ground".
+			if (onGround) {
+				Debug.DrawRay (transform.position - Vector3.up * jumpDetectionLine, transform.right * 0.5f, Color.green);
+				Debug.DrawRay (transform.position - Vector3.up * jumpDetectionLine, -transform.right * 0.5f, Color.green);
+			} else if (!onGround) {
+				Debug.DrawRay (transform.position - Vector3.up * jumpDetectionLine, transform.right * 0.5f, Color.yellow);
+				Debug.DrawRay (transform.position - Vector3.up * jumpDetectionLine, -transform.right * 0.5f, Color.yellow);
+			}
+
+			//Drawing collision angles.
+			for (int i = 0; i < groundContacts.Count; i++) {
+				ContactPoint contactPoint = groundContacts [i];
+				Debug.DrawRay (contactPoint.point, contactPoint.normal, Color.green);
+			}
 		}
 	}
 
 	void FixedUpdate(){
-
-		if (rB.velocity.x < maxHorzSpeed && rB.velocity.x > -maxHorzSpeed) {
+		//Horizontal Movement Settings
+		if (hAxis != 0 && onGround) {
+			//...when on ground
 			rB.AddForce (Vector2.right * hAxis * acceleration * Time.fixedDeltaTime * 1000);
+		} else if (hAxis != 0 && !onGround) {
+			//...when in the air
+			rB.AddForce (Vector2.right * hAxis * acceleration * Time.fixedDeltaTime * 1000 / airAccelDampener);
+		} else if (!onGround){
+			///...when there is no horizontal input. (Allows flying through the air majestically)
+			rB.AddForce (Vector2.right * -rB.velocity.x * Time.fixedDeltaTime * 1000 / slidingFactor);
 		}
+
+		//Horizontal Speed Limit
+		rB.velocity = new Vector3 (Mathf.Clamp(rB.velocity.x, -maxHorzSpeed, maxHorzSpeed), rB.velocity.y, rB.velocity.z);
+
+		//groundContacts determine status of ground contact.
+		if (groundContacts.Count > 0) {
+			onGround = true;
+		} else {
+			onGround = false;
+		}
+
+		//Emptying out ground contacts so they don't stack between frames.
+		groundContacts.Clear();
+
+		//Enhanced Gravity FactorTM for your platforming enjoyment.
+		rB.AddForce (Vector3.down * enhancedGravityFactorTM);
+
+		//Aerial jumps (every jump after the first one)
+		//UNDER CONSTRUCTION
 	}
 
 	void OnCollisionStay(Collision collInfo){
-		
+
+		//Label all collisions made under the "jumpDetectionLine" as ground contacts.
 		for (int i = 0; i < collInfo.contacts.Length; i++) {
 			if (collInfo.contacts [i].point.y < transform.position.y - jumpDetectionLine) {
-				//groundContacts.Add (collInfo.contacts [i].point);
+				groundContacts.Add (collInfo.contacts [i]);
 			}
 		}
 
-		//for (int i = 0; i < groundContacts.Count; i++) {
-			//contactPoint = groundContacts [i];
-			//Workin ere
-		//}
+		//Ground contact enables jumping. First jump code is done here.
+		if (onGround && vAxis > 0) {
+			Vector3 jumpVector = Vector3.zero;
 
+			for (int i = 0; i < groundContacts.Count; i++) {
+				ContactPoint contactPoint = groundContacts [i];
+				jumpVector = (jumpVector + contactPoint.normal).normalized;
+			}
+
+			//Bouncy House Factor.
+			float bHF = Mathf.Abs(jumpVector.x) * bouncyHouseFactor + 1;
+
+			rB.AddForce (jumpVector * bHF * jumpPower * 100);
+			jumpsAvailable -= 1;
+		}
 	}
 }
