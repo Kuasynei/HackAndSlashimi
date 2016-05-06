@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Enemy : Entity {
+public class EnemyClass : EntityClass {
 
 	// Use this for initialization
 	void Awake () {

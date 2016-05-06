@@ -1,18 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Entity
-{
+public class EntityClass : MonoBehaviour {
 	protected float health = 1;
 
-	protected float takeDamage(float damage)
-	{
+	protected float takeDamage(float damage) {
 		health -= damage;
 		return health;
 	}
 
-	protected float heal(float heal)
-	{
+	protected float heal(float heal) {
 		heal += heal;
 		return health;
 	}
