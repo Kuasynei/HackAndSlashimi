@@ -10,9 +10,10 @@ public class Camera2D : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		Vector3 lockedTargetTransform = new Vector3 (target.position.x, target.position.y, zLayer);
+		Vector3 lockedTargetTransform = new Vector3 (target.position.x, target.position.y / 2 + groundLayer, zLayer);
 		Vector3 lockedCurrentTransform = new Vector3 (transform.position.x, transform.position.y, zLayer);
 
 		transform.position = Vector3.Lerp (lockedCurrentTransform, lockedTargetTransform, lerpSpeed * Time.deltaTime);
+
 	}
 }
