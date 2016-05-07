@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Player Mechanics Test World.unity
+- path: Assets/Mike_TestWorld.unity
   isLoaded: 1
   isActive: 1
