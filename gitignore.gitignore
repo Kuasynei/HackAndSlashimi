@@ -5,6 +5,12 @@
 [Oo]bj/
 [Bb]uild
 [Ll]ibrary/
+
+Temp/
+Obj/
+Build/
+Library/
+
 sysinfo.txt
 *.stackdump
  

@@ -6,10 +6,10 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{7DCA03FA-E0EE-53DA-9492-BF34A225FA6A}</ProjectGuid>
+    <ProjectGuid>{F7D70ED9-3D01-2AEC-6BCE-3F7B512C8830}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <AssemblyName>Assembly-UnityScript</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>Assets</BaseDirectory>
@@ -45,10 +45,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\Camera.cs" />
-     <Compile Include="Assets\Scripts\EnemyClass.cs" />
-     <Compile Include="Assets\Scripts\EntityClass.cs" />
-     <Compile Include="Assets\Scripts\PlayerClass.cs" />
+     <Compile Include="Assets\UnityDebrisSystem\Debris.js" />
+     <Compile Include="Assets\UnityDebrisSystem\Examples\ExampleScripts\UDS_Camera.js" />
+     <Compile Include="Assets\UnityDebrisSystem\Examples\ExampleScripts\UDS_Projectile.js" />
+     <None Include="Assets\UnityDebrisSystem\Readme.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

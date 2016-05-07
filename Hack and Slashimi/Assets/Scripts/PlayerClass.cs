@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PlayerClass : EntityClass {
+	[SerializeField] GameObject swordOfSlashing;
+
 	[SerializeField] bool disableInput = false;
 	[SerializeField] bool debugMode = true;
 	[SerializeField] float maxHealth = 100;
+	[SerializeField] float rotationSpeed = 10;
 
 	//Horizontal Movement
 	[SerializeField] float acceleration = 5;
@@ -20,12 +23,14 @@ public class PlayerClass : EntityClass {
 	[SerializeField] float enhancedGravityFactorTM = 2;
 	[SerializeField] float bouncyHouseFactor = 2; //Increases jump power against weird angles that aren't straight up, to make them feel better to jump against.
 
-	float jumpGuideline = 0.5f; //This is so that you don't waste your double jumps. 
+	float jumpGuideline = 0.2f; //This is so that you don't waste your double jumps. 
 	float jumpCooldown = 0; //You can only jump once per half second.
+	float turnThreshhold = 0.1f; //You must be going this fast in order to change directions. Stops wall jitter.
 
 	float jumpsAvailable;
 	float hAxis;
 	float vAxis;
+	int facing = 1; //-1 Facing Left / 1 Facing Right
 	bool onGround;
 	Rigidbody rB;
 
@@ -47,11 +52,11 @@ public class PlayerClass : EntityClass {
 		if (debugMode) {
 			//Any collisions the player makes below this line will count as "contact with ground".
 			if (onGround) {
-				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, transform.right * 0.5f, Color.green);
-				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, -transform.right * 0.5f, Color.green);
+				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, Vector3.right * 0.5f, Color.green);
+				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, -Vector3.right * 0.5f, Color.green);
 			} else if (!onGround) {
-				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, transform.right * 0.5f, Color.yellow);
-				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, -transform.right * 0.5f, Color.yellow);
+				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, Vector3.right * 0.5f, Color.yellow);
+				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, -Vector3.right * 0.5f, Color.yellow);
 			}
 
 			//Drawing collision angles.
@@ -87,6 +92,17 @@ public class PlayerClass : EntityClass {
 			jumpCooldown = jumpGuideline;
 			jumpsAvailable -= 1;
 		}
+
+		//Setting player facing direction.
+		if (facing != 1 && rB.velocity.x > Mathf.Abs(turnThreshhold)) {
+			facing = 1;
+		} else if (facing != -1 && rB.velocity.x < Mathf.Abs(turnThreshhold)) {
+			facing = -1;
+		}
+
+		//Rotating the player so that they face the direction they should be facing.
+		Quaternion desiredRotation = Quaternion.LookRotation ((Vector3.right * facing), Vector3.up);
+		transform.rotation = Quaternion.Slerp (transform.rotation, desiredRotation, rotationSpeed);
 
 		//groundContacts determine status of ground contact.
 		if (groundContacts.Count > 0) {
