@@ -172,7 +172,7 @@ public class PlayerClass : EntityClass {
 		rB.AddForce (Vector3.down * eGFactor); //Enhanced Gravity FactorTM for your platforming enjoyment.
 	}
 
-	void OnCollisionStay(Collision collInfo){
+	void OnCollisionStay(Collision collInfo) {
 
 		//Label all collisions made under the "jumpDetectionLine" as ground contacts.
 		for (int i = 0; i < collInfo.contacts.Length; i++) {

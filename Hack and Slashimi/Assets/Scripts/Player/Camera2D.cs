@@ -10,10 +10,20 @@ public class Camera2D : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		Vector3 lockedTargetTransform = new Vector3 (target.position.x, target.position.y / 2 + groundLayer, zLayer);
+		//Horizontal Lerping
+		Vector3 lockedTargetTransform = new Vector3 (target.position.x, transform.position.y, zLayer);
 		Vector3 lockedCurrentTransform = new Vector3 (transform.position.x, transform.position.y, zLayer);
-
 		transform.position = Vector3.Lerp (lockedCurrentTransform, lockedTargetTransform, lerpSpeed * Time.deltaTime);
 
+		//Vertical Lerping
+		Vector3 targetTransformV = new Vector3 (transform.position.x, target.position.y / 2 + groundLayer, transform.position.z);
+		Vector3 currentTransformV = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+		transform.position = Vector3.Lerp (currentTransformV, targetTransformV, lerpSpeed * Time.deltaTime);
+
+	}
+
+	void OnTriggerStay(Collider otherColl) {
+		groundLayer = otherColl.transform.position.y;
+		Debug.Log ("TA-DA");
 	}
 }
