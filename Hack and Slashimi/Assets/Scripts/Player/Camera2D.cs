@@ -15,9 +15,4 @@ public class Camera2D : MonoBehaviour {
 
 		transform.position = Vector3.Lerp (lockedCurrentTransform, lockedTargetTransform, lerpSpeed * Time.deltaTime);
 	}
-
-	void OnTriggerEnter(Collider otherColl)
-	{
-
-	}
 }

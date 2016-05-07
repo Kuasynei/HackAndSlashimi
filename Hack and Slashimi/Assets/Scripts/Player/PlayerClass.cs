@@ -1,14 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
+
 
 public class PlayerClass : EntityClass {
-	[SerializeField] WeaponClass myBlade;
 
-	[SerializeField] bool disableInput = false;
 	[SerializeField] bool debugMode = true;
+	[SerializeField] bool disableInput = false;
+	[SerializeField] Transform spawnPoint;
+	[SerializeField] Text uI_HP;
 	[SerializeField] float maxHealth = 20;
 	[SerializeField] float rotationSpeed = 1;
+
+	bool respawning = false;
+	int facing = 1; //-1 Facing Left / 1 Facing Right
+	Vector3 lookOrb = new Vector3(0,0,0); //Orbits the player clockwise when they turn to make all rotations clockwise.
+	Collider coll;
 
 	//Horizontal Movement
 	[SerializeField] float acceleration = 5;
@@ -22,19 +30,21 @@ public class PlayerClass : EntityClass {
 	[SerializeField] float maxJumps = 2; //Maximum number of jumps, two for double jump, 0 and you can't jump at all.
 	[SerializeField] float enhancedGravityFactorTM = 2;
 	[SerializeField] float bouncyHouseFactor = 2; //Increases jump power against weird angles that aren't straight up, to make them feel better to jump against.
-
-
 	float jumpGuideline = 0.5f; //This is so that you don't waste your double jumps. 
 	float jumpCooldown = 0; //You can only jump once per half second.
-
 	float jumpsAvailable;
+	float eGFactor; //ENHANCED GRAVITY FACTOR TM
+	bool onGround;
+
+	//Player Inputs
 	float hAxis;
 	float vAxis;
 	float fire1Axis;
+
+	//Weapons
+	[SerializeField] WeaponClass myBlade;
 	float weaponLock = 0; //Prevents the player from launching multiple attack commands before the previous finishes.
-	int facing = 1; //-1 Facing Left / 1 Facing Right
-	bool onGround;
-	Vector3 lookOrb = new Vector3(0,0,0); //Orbits the player clockwise when they turn to make all rotations clockwise.
+
 	Rigidbody rB;
 
 	List<ContactPoint> groundContacts = new List<ContactPoint> ();
@@ -44,16 +54,28 @@ public class PlayerClass : EntityClass {
 		health = maxHealth;
 		rB = GetComponent<Rigidbody> ();
 		jumpsAvailable = maxJumps;
+		eGFactor = enhancedGravityFactorTM;
+		coll = GetComponent<Collider> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if (health <= 0 && !respawning) {
+			health = 0;
+			respawning = true;
+			StartCoroutine ("Die");
+		}
+
 		//Player Input
 		if (!disableInput) {
 			hAxis = Input.GetAxis ("Horizontal");
 			vAxis = Input.GetAxis ("Vertical");
 			fire1Axis = Input.GetAxis ("Fire1");
-		} 
+		} else {
+			hAxis = 0;
+			vAxis = 0;
+			fire1Axis = 0;
+		}
 
 		if (debugMode) {
 			//Any collisions the player makes below this line will count as "contact with ground".
@@ -73,6 +95,12 @@ public class PlayerClass : EntityClass {
 
 			//Drawing the look orb (LOOK AT IT)
 			Debug.DrawRay(lookOrb + transform.position, Vector3.up * 0.5f, Color.blue, Time.deltaTime, true);
+
+			//HURT YOURSELF BUTTON
+			if (Input.GetKeyDown (KeyCode.H)) {
+				TakeDamage (100);
+				Debug.Log ("LIFE did 100 damage to " + name + "! " + health + " health remaining.");
+			}
 		}
 			
 		//Attack Commands
@@ -80,9 +108,12 @@ public class PlayerClass : EntityClass {
 		if (fire1Axis != 0 && weaponLock <= 0) {
 			if (myBlade.GetType () == typeof(Sword)){
 				(myBlade as Sword).BasicAttack (0.4f, 2);
-				weaponLock = 0.4f;
+				weaponLock = 0.5f;
 			}
 		}
+
+		//UI
+		uI_HP.text = health.ToString();
 	}
 
 	void FixedUpdate(){
@@ -138,7 +169,7 @@ public class PlayerClass : EntityClass {
 		}
 
 		groundContacts.Clear(); //Emptying out ground contacts so they don't stack between frames.
-		rB.AddForce (Vector3.down * enhancedGravityFactorTM);//Enhanced Gravity FactorTM for your platforming enjoyment.
+		rB.AddForce (Vector3.down * eGFactor); //Enhanced Gravity FactorTM for your platforming enjoyment.
 	}
 
 	void OnCollisionStay(Collision collInfo){
@@ -166,5 +197,40 @@ public class PlayerClass : EntityClass {
 			jumpCooldown = jumpGuideline;
 			jumpsAvailable -= 1;
 		}
+	}
+
+	IEnumerator Die() {
+		//Disabling and restarting some variables.
+		float timeToRecharge = 3;
+		disableInput = true;
+		rB.useGravity = false;
+		rB.velocity = new Vector3 (0, 0, 0);
+		jumpsAvailable = maxJumps - 1;
+		eGFactor = 0;
+		coll.enabled = false;
+
+		yield return new WaitForSeconds (1f);
+
+		//Returning to spawn point.
+		while (Vector3.Distance (transform.position, spawnPoint.position) > 0.1f) {
+			transform.position = Vector3.Lerp (transform.position, spawnPoint.position, 0.05f);
+			yield return new WaitForFixedUpdate ();
+		}
+
+		//Recharging health.
+		yield return new WaitForSeconds (0.5f);
+		for (; health < maxHealth; health++) {
+			yield return new WaitForSeconds (timeToRecharge / maxHealth);
+		}
+
+		yield return new WaitForSeconds (0.5f);
+
+		//Reenabling some features.
+		disableInput = false;
+		rB.useGravity = true;
+		eGFactor = enhancedGravityFactorTM;
+		coll.enabled = true;
+
+		respawning = false;
 	}
 }
