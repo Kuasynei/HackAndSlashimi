@@ -1,18 +1,9 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player\PlayerClass.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\AI\AiMovement.cs">
     <Files>
-<<<<<<< HEAD
-      <File FileName="Assets\Scripts\Player\PlayerClass.cs" Line="59" Column="3" />
-      <File FileName="Assets\Scripts\Entities\Colossus.cs" Line="1" Column="1" />
-=======
-      <File FileName="Assets\Scripts\HealthPickup.cs" Line="14" Column="24" />
-      <File FileName="Assets\Scripts\Entities\Colossus.cs" Line="34" Column="54" />
-      <File FileName="Assets\Scripts\Player\PlayerClass.cs" Line="243" Column="3" />
-      <File FileName="Assets\Scripts\EntityClass.cs" Line="13" Column="9" />
-      <File FileName="Assets\Scripts\WeaponClass.cs" Line="21" Column="27" />
-      <File FileName="Assets\Scripts\Entities\Gate.cs" Line="15" Column="5" />
->>>>>>> origin/master
+      <File FileName="Assets\Scripts\AI\AiMovement.cs" Line="67" Column="1" />
+      <File FileName="Assets\Scripts\Entities\Colossus.cs" Line="46" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
