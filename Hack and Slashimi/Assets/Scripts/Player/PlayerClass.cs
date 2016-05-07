@@ -57,6 +57,11 @@ public class PlayerClass : EntityClass {
 		eGFactor = enhancedGravityFactorTM;
 		coll = GetComponent<Collider> ();
 	}
+
+	void Start()
+	{
+		transform.position = spawnPoint.position;
+	}
 	
 	// Update is called once per frame
 	void Update () {

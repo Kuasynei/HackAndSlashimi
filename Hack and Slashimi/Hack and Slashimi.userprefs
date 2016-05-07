@@ -1,9 +1,23 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player\Camera2D.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player\PlayerClass.cs">
     <Files>
+<<<<<<< HEAD
       <File FileName="Assets\Scripts\Player\Camera2D.cs" Line="22" Column="76" />
       <File FileName="Assets\Scripts\Player\PlayerClass.cs" Line="1" Column="1" />
+=======
+<<<<<<< HEAD
+      <File FileName="Assets\Scripts\Player\PlayerClass.cs" Line="231" Column="42" />
+      <File FileName="Assets\Scripts\WeaponClass.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Player\Sword.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Player\Camera2D.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\SetPositionTo.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\EntityClass.cs" Line="1" Column="1" />
+=======
+      <File FileName="Assets\Scripts\Player\PlayerClass.cs" Line="201" Column="2" />
+      <File FileName="Assets\Scripts\Player\Camera2D.cs" Line="21" Column="55" />
+>>>>>>> origin/master
+>>>>>>> origin/master
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
