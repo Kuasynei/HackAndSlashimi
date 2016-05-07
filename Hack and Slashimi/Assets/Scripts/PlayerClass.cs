@@ -23,15 +23,15 @@ public class PlayerClass : EntityClass {
 	[SerializeField] float enhancedGravityFactorTM = 2;
 	[SerializeField] float bouncyHouseFactor = 2; //Increases jump power against weird angles that aren't straight up, to make them feel better to jump against.
 
-	float jumpGuideline = 0.2f; //This is so that you don't waste your double jumps. 
+	float jumpGuideline = 0.5f; //This is so that you don't waste your double jumps. 
 	float jumpCooldown = 0; //You can only jump once per half second.
-	float turnThreshhold = 0.1f; //You must be going this fast in order to change directions. Stops wall jitter.
 
 	float jumpsAvailable;
 	float hAxis;
 	float vAxis;
 	int facing = 1; //-1 Facing Left / 1 Facing Right
 	bool onGround;
+	Vector3 lookOrb = new Vector3(0,0,0); //Orbits the player clockwise when they turn to make all rotations clockwise.
 	Rigidbody rB;
 
 	List<ContactPoint> groundContacts = new List<ContactPoint> ();
@@ -64,6 +64,9 @@ public class PlayerClass : EntityClass {
 				ContactPoint contactPoint = groundContacts [i];
 				Debug.DrawRay (contactPoint.point, contactPoint.normal, Color.green);
 			}
+
+			//Drawing the look orb (LOOK AT IT)
+			Debug.DrawRay(lookOrb + transform.position, Vector3.up * 0.5f, Color.blue, Time.deltaTime, true);
 		}
 	}
 
@@ -94,22 +97,22 @@ public class PlayerClass : EntityClass {
 		}
 
 		//Setting player facing direction.
-		if (facing != 1 && hAxis > 0) {
+		if (hAxis > 0) {
 			facing = 1;
-		} else if (facing != -1 && hAxis < 0){
+		} else if (hAxis < 0){
 			facing = -1;
 		}
 
-		/* //Set VIA Velocity
-		if (facing != 1 && rB.velocity.x > Mathf.Abs(turnThreshhold)) {
-			facing = 1;
-		} else if (facing != -1 && rB.velocity.x < Mathf.Abs(turnThreshhold)) {
-			facing = -1;
+		//Orb lerps around the player to determine where they should be looking. THEN HAVE THE PLAYER LOOK AT IT.
+		if (facing == 1) {
+			lookOrb = Vector3.Lerp (new Vector3 (lookOrb.x, 0, 0), new Vector3 (1, 0, 0), rotationSpeed * Time.fixedDeltaTime);
+			lookOrb += new Vector3 (0, 0, 1f - Mathf.Abs(lookOrb.x));
+		} else if (facing == -1) {
+			lookOrb = Vector3.Lerp (new Vector3 (lookOrb.x, 0, 0), new Vector3(-1, 0, 0), rotationSpeed * Time.fixedDeltaTime);
+			lookOrb += new Vector3 (0, 0, -1f + Mathf.Abs(lookOrb.x));
 		}
-		*/
-		//Rotating the player so that they face the direction they should be facing.
-		Quaternion desiredRotation = Quaternion.LookRotation ((Vector3.right * facing), Vector3.up);
-		transform.rotation = Quaternion.Slerp (transform.rotation, desiredRotation, rotationSpeed * Time.fixedDeltaTime);
+		//LOOK AT THE LOOK ORB DAMN IT.
+		transform.LookAt (lookOrb + transform.position);
 
 		//groundContacts determine status of ground contact.
 		if (groundContacts.Count > 0) {
