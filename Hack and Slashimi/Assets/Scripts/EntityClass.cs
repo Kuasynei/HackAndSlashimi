@@ -9,8 +9,8 @@ public class EntityClass : MonoBehaviour {
 		return health;
 	}
 
-	protected float Heal(float heal) {
-		heal += heal;
+	public float Heal(float heal) {
+		health += heal;
 		return health;
 	}
 }

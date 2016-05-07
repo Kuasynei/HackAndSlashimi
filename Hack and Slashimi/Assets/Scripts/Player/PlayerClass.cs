@@ -57,11 +57,6 @@ public class PlayerClass : EntityClass {
 		eGFactor = enhancedGravityFactorTM;
 		coll = GetComponent<Collider> ();
 	}
-
-	void Start()
-	{
-		transform.position = spawnPoint.position;
-	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -105,6 +100,9 @@ public class PlayerClass : EntityClass {
 			if (Input.GetKeyDown (KeyCode.H)) {
 				TakeDamage (100);
 				Debug.Log ("LIFE did 100 damage to " + name + "! " + health + " health remaining.");
+			}
+			if (Input.GetKeyDown (KeyCode.J)) {
+				TakeDamage (50);
 			}
 		}
 			
