@@ -12,7 +12,7 @@ public class Gate : EntityClass
 
 	void Update()
 	{
-		Debug.Log(gameObject.name + "'s Health: " + health);
+		//Debug.Log(gameObject.name + "'s Health: " + health);
 
 		if(health <= 0)
 		{
