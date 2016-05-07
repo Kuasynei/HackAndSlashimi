@@ -45,10 +45,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\AI\AiMovement.cs" />
      <Compile Include="Assets\Scripts\Entities\Colossus.cs" />
      <Compile Include="Assets\Scripts\Entities\EnemyClass.cs" />
      <Compile Include="Assets\Scripts\Entities\Gate.cs" />
      <Compile Include="Assets\Scripts\EntityClass.cs" />
+     <Compile Include="Assets\Scripts\HealthPickup.cs" />
      <Compile Include="Assets\Scripts\Player\Camera2D.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerClass.cs" />
      <Compile Include="Assets\Scripts\Player\Sword.cs" />
