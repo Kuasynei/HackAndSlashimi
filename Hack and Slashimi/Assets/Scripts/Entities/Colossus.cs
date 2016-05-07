@@ -32,7 +32,7 @@ public class Colossus : EntityClass
 				if(timeSinceLastHit > 5)
 				{
 					gateScript = (Gate)hit.collider.GetComponent("Gate");
-					gateScript.takeDamage(cleft);
+					gateScript.TakeDamage(cleft);
 					timeSinceLastHit = 0;
 				}
 

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PlayerClass : EntityClass {
-	[SerializeField] GameObject swordOfSlashing;
+	[SerializeField] WeaponClass myBlade;
 
 	[SerializeField] bool disableInput = false;
 	[SerializeField] bool debugMode = true;
-	[SerializeField] float maxHealth = 100;
+	[SerializeField] float maxHealth = 20;
 	[SerializeField] float rotationSpeed = 1;
 
 	//Horizontal Movement
@@ -23,12 +23,15 @@ public class PlayerClass : EntityClass {
 	[SerializeField] float enhancedGravityFactorTM = 2;
 	[SerializeField] float bouncyHouseFactor = 2; //Increases jump power against weird angles that aren't straight up, to make them feel better to jump against.
 
+
 	float jumpGuideline = 0.5f; //This is so that you don't waste your double jumps. 
 	float jumpCooldown = 0; //You can only jump once per half second.
 
 	float jumpsAvailable;
 	float hAxis;
 	float vAxis;
+	float fire1Axis;
+	float weaponLock = 0; //Prevents the player from launching multiple attack commands before the previous finishes.
 	int facing = 1; //-1 Facing Left / 1 Facing Right
 	bool onGround;
 	Vector3 lookOrb = new Vector3(0,0,0); //Orbits the player clockwise when they turn to make all rotations clockwise.
@@ -46,8 +49,11 @@ public class PlayerClass : EntityClass {
 	// Update is called once per frame
 	void Update () {
 		//Player Input
-		hAxis = Input.GetAxis ("Horizontal");
-		vAxis = Input.GetAxis ("Vertical");
+		if (!disableInput) {
+			hAxis = Input.GetAxis ("Horizontal");
+			vAxis = Input.GetAxis ("Vertical");
+			fire1Axis = Input.GetAxis ("Fire1");
+		} 
 
 		if (debugMode) {
 			//Any collisions the player makes below this line will count as "contact with ground".
@@ -67,6 +73,15 @@ public class PlayerClass : EntityClass {
 
 			//Drawing the look orb (LOOK AT IT)
 			Debug.DrawRay(lookOrb + transform.position, Vector3.up * 0.5f, Color.blue, Time.deltaTime, true);
+		}
+			
+		//Attack Commands
+		weaponLock -= Time.deltaTime;
+		if (fire1Axis != 0 && weaponLock <= 0) {
+			if (myBlade.GetType () == typeof(Sword)){
+				(myBlade as Sword).BasicAttack (0.4f, 2);
+				weaponLock = 0.4f;
+			}
 		}
 	}
 

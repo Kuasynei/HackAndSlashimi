@@ -4,12 +4,12 @@ using System.Collections;
 public class EntityClass : MonoBehaviour {
 	protected float health = 1;
 
-	public float takeDamage(float damage) {
+	public float TakeDamage(float damage) {
 		health -= damage;
 		return health;
 	}
 
-	protected float heal(float heal) {
+	protected float Heal(float heal) {
 		heal += heal;
 		return health;
 	}
