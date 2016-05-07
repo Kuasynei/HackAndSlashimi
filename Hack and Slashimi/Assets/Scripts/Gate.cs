@@ -12,6 +12,11 @@ public class Gate : EntityClass
 
 	void Update()
 	{
-		Debug.Log(health);
+		Debug.Log(gameObject.name + "'s Health: " + health);
+
+		if(health <= 0)
+		{
+			Destroy(gameObject);
+		}
 	}
 }

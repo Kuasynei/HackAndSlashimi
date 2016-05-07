@@ -31,7 +31,6 @@ public class Colossus : EntityClass
 				rB.velocity = new Vector3(0,0,0);
 				if(timeSinceLastHit > 5)
 				{
-					AttackGate();
 					gateScript = (Gate)hit.collider.GetComponent("Gate");
 					gateScript.takeDamage(cleft);
 					timeSinceLastHit = 0;
@@ -52,10 +51,5 @@ public class Colossus : EntityClass
 		{
 			rB.velocity = new Vector3(movementSpeed / 10,0,0);
 		}
-	}
-
-	void AttackGate()
-	{
-		//code to damage the gate
 	}
 }
