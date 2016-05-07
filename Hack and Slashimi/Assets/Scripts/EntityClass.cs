@@ -4,7 +4,7 @@ using System.Collections;
 public class EntityClass : MonoBehaviour {
 	protected float health = 1;
 
-	protected float takeDamage(float damage) {
+	public float takeDamage(float damage) {
 		health -= damage;
 		return health;
 	}

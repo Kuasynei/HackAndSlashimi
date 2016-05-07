@@ -9,4 +9,9 @@ public class Gate : EntityClass
 	{
 		health = maxHealth;
 	}
+
+	void Update()
+	{
+		Debug.Log(health);
+	}
 }
