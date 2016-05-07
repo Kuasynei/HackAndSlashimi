@@ -3,13 +3,15 @@ using System.Collections;
 
 public class Camera2D : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
+	[SerializeField] Transform target;
+	[SerializeField] float lerpSpeed;
+	[SerializeField] float zLayer = -11;
+
 	// Update is called once per frame
 	void Update () {
-	
+		Vector3 lockedTargetTransform = new Vector3 (target.position.x, target.position.y, zLayer);
+		Vector3 lockedCurrentTransform = new Vector3 (transform.position.x, transform.position.y, zLayer);
+
+		transform.position = Vector3.Lerp (lockedCurrentTransform, lockedTargetTransform, lerpSpeed * Time.deltaTime);
 	}
 }

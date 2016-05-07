@@ -8,7 +8,7 @@ public class PlayerClass : EntityClass {
 	[SerializeField] bool disableInput = false;
 	[SerializeField] bool debugMode = true;
 	[SerializeField] float maxHealth = 100;
-	[SerializeField] float rotationSpeed = 10;
+	[SerializeField] float rotationSpeed = 1;
 
 	//Horizontal Movement
 	[SerializeField] float acceleration = 5;
@@ -94,15 +94,22 @@ public class PlayerClass : EntityClass {
 		}
 
 		//Setting player facing direction.
+		if (facing != 1 && hAxis > 0) {
+			facing = 1;
+		} else if (facing != -1 && hAxis < 0){
+			facing = -1;
+		}
+
+		/* //Set VIA Velocity
 		if (facing != 1 && rB.velocity.x > Mathf.Abs(turnThreshhold)) {
 			facing = 1;
 		} else if (facing != -1 && rB.velocity.x < Mathf.Abs(turnThreshhold)) {
 			facing = -1;
 		}
-
+		*/
 		//Rotating the player so that they face the direction they should be facing.
 		Quaternion desiredRotation = Quaternion.LookRotation ((Vector3.right * facing), Vector3.up);
-		transform.rotation = Quaternion.Slerp (transform.rotation, desiredRotation, rotationSpeed);
+		transform.rotation = Quaternion.Slerp (transform.rotation, desiredRotation, rotationSpeed * Time.fixedDeltaTime);
 
 		//groundContacts determine status of ground contact.
 		if (groundContacts.Count > 0) {
