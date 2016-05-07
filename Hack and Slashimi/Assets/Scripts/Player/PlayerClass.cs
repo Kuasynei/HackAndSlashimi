@@ -101,6 +101,9 @@ public class PlayerClass : EntityClass {
 				TakeDamage (100);
 				Debug.Log ("LIFE did 100 damage to " + name + "! " + health + " health remaining.");
 			}
+			if (Input.GetKeyDown (KeyCode.J)) {
+				TakeDamage (50);
+			}
 		}
 			
 		//Attack Commands

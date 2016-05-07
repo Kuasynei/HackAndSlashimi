@@ -91,7 +91,15 @@ public class AiMovement : EntityClass {
         }
         else
         {
-            charController.SimpleMove(new Vector3(-1, 0, 0));
+            Vector3 headingDir = playerColossus.transform.position - transform.position;
+            float leftOrRightValue = AngleDir(transform.forward, headingDir, transform.up);
+            if (leftOrRightValue != 0)
+            charController.SimpleMove(new Vector3(leftOrRightValue * 1, 0, 0));
+            if (leftOrRightValue != 0)
+            {
+                transform.rotation = Quaternion.LookRotation(leftOrRightValue * Vector3.right);
+            }
+
         }
 
         //Ticks down the weapon lock allowing the enemy to attack again
