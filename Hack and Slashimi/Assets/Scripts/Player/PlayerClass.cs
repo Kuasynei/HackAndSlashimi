@@ -30,7 +30,7 @@ public class PlayerClass : EntityClass {
 	[SerializeField] float maxJumps = 2; //Maximum number of jumps, two for double jump, 0 and you can't jump at all.
 	[SerializeField] float enhancedGravityFactorTM = 2;
 	[SerializeField] float bouncyHouseFactor = 2; //Increases jump power against weird angles that aren't straight up, to make them feel better to jump against.
-	float jumpGuideline = 0.5f; //This is so that you don't waste your double jumps. 
+	float jumpGuideline = 0.2f; //This is so that you don't waste your double jumps. 
 	float jumpCooldown = 0; //You can only jump once per half second.
 	float jumpsAvailable;
 	float eGFactor; //ENHANCED GRAVITY FACTOR TM
@@ -56,6 +56,11 @@ public class PlayerClass : EntityClass {
 		jumpsAvailable = maxJumps;
 		eGFactor = enhancedGravityFactorTM;
 		coll = GetComponent<Collider> ();
+	}
+
+	void Start()
+	{
+		transform.position = spawnPoint.position;
 	}
 	
 	// Update is called once per frame
@@ -172,7 +177,7 @@ public class PlayerClass : EntityClass {
 		rB.AddForce (Vector3.down * eGFactor); //Enhanced Gravity FactorTM for your platforming enjoyment.
 	}
 
-	void OnCollisionStay(Collision collInfo){
+	void OnCollisionStay(Collision collInfo) {
 
 		//Label all collisions made under the "jumpDetectionLine" as ground contacts.
 		for (int i = 0; i < collInfo.contacts.Length; i++) {

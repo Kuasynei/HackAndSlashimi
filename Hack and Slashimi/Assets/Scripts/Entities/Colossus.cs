@@ -34,9 +34,9 @@ public class Colossus : EntityClass
 					gateScript = (Gate)hit.collider.GetComponent("Gate");
 					gateScript.TakeDamage(cleft);
 					timeSinceLastHit = 0;
+					Debug.DrawLine (transform.position, hit.point, Color.red, .3f);
 				}
-
-				Debug.DrawLine(transform.position, hit.point);
+				Debug.DrawLine(transform.position, hit.point, Color.green);
 			}
 		}
 		else
