@@ -34,38 +34,24 @@ public class AiMovement : EntityClass {
         //Check distance from the enemy to the player colossus
         distToColossus = Vector3.Distance(playerColossus.transform.position, transform.position);
 
-        //Ememy Attack Funtionality
-        //The enemy AI is either going to hit the player or the colossus. The colossus has priority.
-        //The idea is that the enemy will rotate and look at the thing it wants to hit and then run the function
-        //@note: I have no idea how to do this without breaking it
-        if (enemySword && weaponLock <= 0)
-        {
-            if (distToColossus <= 2 || distToPlayer <= 1.5f)
-            {
-                if (distToColossus <= 2)
-                {
-                    //Rotate and smack the colossus
-                }
-                else if (distToPlayer <= 1.5f)
-                {
-                    //Rotate and smack the player
-                }
-                enemySword.BasicAttack(0.4f, 1);
-                weaponLock = 1f;
-            }
-        }
-
         //This entire area is basically a behavior tree. This prioritizes running towards the colossus then towards the player else it will just
         //run to the left
         //@note: the basic else functionality will have to change because enemies will not only spawn on the right of the map
         if(distToColossus < 10)
         {
-            if(distToColossus > 2)
+            if(distToColossus > 3)
             {
                 //Move toward the colossus
-                charController.SimpleMove(new Vector3(3, 0, 0));
+                Vector3 headingDir = playerColossus.transform.position - transform.position;
+                float leftOrRightValue = AngleDir(transform.forward, headingDir, transform.up);
+                if (leftOrRightValue != 0)
+                {
+                    transform.rotation = Quaternion.LookRotation(leftOrRightValue * Vector3.right);
+                }
+
+                charController.SimpleMove(new Vector3(leftOrRightValue * 4, 0, 0));
             }
-            else if( distToColossus < 2)
+            else if( distToColossus < 3)
             {
                 //Stop and look at the colossus
                 charController.SimpleMove(Vector3.zero);
@@ -82,7 +68,7 @@ public class AiMovement : EntityClass {
                     transform.rotation = Quaternion.LookRotation(leftOrRightValue * Vector3.right);
                 }
 
-                charController.SimpleMove(new Vector3(leftOrRightValue * 3, 0, 0));
+                charController.SimpleMove(new Vector3(leftOrRightValue * 4, 0, 0));
             }
             else if (distToPlayer < 1.5f)
             {
@@ -92,14 +78,40 @@ public class AiMovement : EntityClass {
         else
         {
             Vector3 headingDir = playerColossus.transform.position - transform.position;
+            headingDir.z = 0;
             float leftOrRightValue = AngleDir(transform.forward, headingDir, transform.up);
-            if (leftOrRightValue != 0)
-            charController.SimpleMove(new Vector3(leftOrRightValue * 1, 0, 0));
             if (leftOrRightValue != 0)
             {
                 transform.rotation = Quaternion.LookRotation(leftOrRightValue * Vector3.right);
             }
+            charController.SimpleMove(new Vector3(leftOrRightValue * 2, 0, 0));
 
+        }
+
+        //Ememy Attack Funtionality
+        //The enemy AI is either going to hit the player or the colossus. The colossus has priority.
+        //The idea is that the enemy will rotate and look at the thing it wants to hit and then run the function
+        //@note: I have no idea how to do this without breaking it
+        if (enemySword && weaponLock <= 0)
+        {
+            if (distToColossus <= 3 || distToPlayer <= 1.5f)
+            {
+                Quaternion startingRot = transform.rotation;
+                if (distToColossus <= 3)
+                {
+                    //Rotate and smack the colossus
+                    transform.rotation = Quaternion.LookRotation(new Vector3(playerColossus.transform.position.x, 0, playerColossus.transform.position.z)
+                                                               - new Vector3(transform.position.x, 0, transform.position.z));
+                    enemySword.BasicAttack(0.4f, 1);
+                }
+                else if (distToPlayer <= 1.5f)
+                {
+                    //Rotate and smack the player
+                }
+
+                weaponLock = 1f;
+                //transform.rotation = startingRot;
+            }
         }
 
         //Ticks down the weapon lock allowing the enemy to attack again
