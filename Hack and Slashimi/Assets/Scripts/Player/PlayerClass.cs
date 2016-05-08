@@ -10,7 +10,7 @@ public class PlayerClass : EntityClass {
 	[SerializeField] bool disableInput = false;
 	[SerializeField] Transform spawnPoint;
 	[SerializeField] Text uI_HP;
-	[SerializeField] float maxHealth = 20;
+	[SerializeField] float maxHealth = 100;
 	[SerializeField] float rotationSpeed = 1;
 
 	bool respawning = false;
@@ -51,7 +51,7 @@ public class PlayerClass : EntityClass {
 
 	// Use this for initialization
 	void Awake () {
-		health = maxHealth;
+		maxH = maxHealth;
 		rB = GetComponent<Rigidbody> ();
 		jumpsAvailable = maxJumps;
 		eGFactor = enhancedGravityFactorTM;

@@ -16,7 +16,7 @@ public class Colossus : EntityClass
 
 	void Awake () 
 	{
-		health = maxHealth;
+		maxH = maxHealth;
 		rB = GetComponent<Rigidbody> ();
 	}
 
