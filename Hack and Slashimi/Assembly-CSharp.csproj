@@ -46,18 +46,9 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AI\AiMovement.cs" />
-<<<<<<< HEAD
      <Compile Include="Assets\Scripts\Enemy\Ballista.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyPool.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemySpawner.cs" />
-=======
-     <Compile Include="Assets\Scripts\EnemyPool.cs" />
-     <Compile Include="Assets\Scripts\EnemySpawner.cs" />
-     <Compile Include="Assets\Scripts\Entities\Ballista.cs" />
-     <Compile Include="Assets\Scripts\Entities\Colossus.cs" />
-     <Compile Include="Assets\Scripts\Entities\EnemyClass.cs" />
-     <Compile Include="Assets\Scripts\Entities\Gate.cs" />
->>>>>>> origin/master
      <Compile Include="Assets\Scripts\EntityClass.cs" />
      <Compile Include="Assets\Scripts\HealthPickup.cs" />
      <Compile Include="Assets\Scripts\MenuController.cs" />

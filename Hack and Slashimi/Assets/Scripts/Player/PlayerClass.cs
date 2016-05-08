@@ -49,6 +49,9 @@ public class PlayerClass : EntityClass {
 
 	List<ContactPoint> groundContacts = new List<ContactPoint> ();
 
+    //Storing the Colossus for use later
+    [SerializeField] GameObject Colossus;
+
 	// Use this for initialization
 	void Awake () {
 		maxH = maxHealth;
@@ -244,4 +247,9 @@ public class PlayerClass : EntityClass {
 
 		respawning = false;
 	}
+
+    public GameObject getColossus()
+    {
+        return Colossus;
+    }
 }
