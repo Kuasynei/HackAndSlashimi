@@ -34,12 +34,14 @@ public class AiMovement : EntityClass {
         //Check distance from the enemy to the player colossus
         distToColossus = Vector3.Distance(playerColossus.transform.position, transform.position);
 
+        // ------------------------------------------------------------ AI BEHAVIOUR START ------------------------------------------------------------ //
+
         //This entire area is basically a behavior tree. This prioritizes running towards the colossus then towards the player else it will just
         //run to the left
         //@note: the basic else functionality will have to change because enemies will not only spawn on the right of the map
-        if(distToColossus < 10)
+        if(distToColossus < 15)
         {
-            if(distToColossus > 3)
+            if(distToColossus > 4)
             {
                 //Move toward the colossus
                 Vector3 headingDir = playerColossus.transform.position - transform.position;
@@ -51,10 +53,19 @@ public class AiMovement : EntityClass {
 
                 charController.SimpleMove(new Vector3(leftOrRightValue * 4, 0, 0));
             }
-            else if( distToColossus < 3)
-            {
-                //Stop and look at the colossus
-                charController.SimpleMove(Vector3.zero);
+            else if( distToColossus < 4)
+            {                
+                if(weaponLock <= 0)
+                {
+                    //Rotate and smack the colossus
+                    transform.rotation = Quaternion.LookRotation(new Vector3(playerColossus.transform.position.x, 0, playerColossus.transform.position.z)
+                                                                   - new Vector3(transform.position.x, 0, transform.position.z));
+                    enemySword.BasicAttack(0.4f, 1);
+                    weaponLock = 1.0f;
+
+                    //Stop and look at the colossus
+                    charController.SimpleMove(Vector3.zero);
+                }
             }
         }
         else if(distToPlayer < 10)
@@ -73,6 +84,11 @@ public class AiMovement : EntityClass {
             else if (distToPlayer < 1.5f)
             {
                 charController.SimpleMove(Vector3.zero);
+                if(weaponLock <= 0)
+                {
+                    enemySword.BasicAttack(0.4f, 1);
+                    weaponLock = 1.0f;
+                }
             }
         }
         else
@@ -88,31 +104,7 @@ public class AiMovement : EntityClass {
 
         }
 
-        //Ememy Attack Funtionality
-        //The enemy AI is either going to hit the player or the colossus. The colossus has priority.
-        //The idea is that the enemy will rotate and look at the thing it wants to hit and then run the function
-        //@note: I have no idea how to do this without breaking it
-        if (enemySword && weaponLock <= 0)
-        {
-            if (distToColossus <= 3 || distToPlayer <= 1.5f)
-            {
-                Quaternion startingRot = transform.rotation;
-                if (distToColossus <= 3)
-                {
-                    //Rotate and smack the colossus
-                    transform.rotation = Quaternion.LookRotation(new Vector3(playerColossus.transform.position.x, 0, playerColossus.transform.position.z)
-                                                               - new Vector3(transform.position.x, 0, transform.position.z));
-                    enemySword.BasicAttack(0.4f, 1);
-                }
-                else if (distToPlayer <= 1.5f)
-                {
-                    //Rotate and smack the player
-                }
-
-                weaponLock = 1f;
-                //transform.rotation = startingRot;
-            }
-        }
+        // ------------------------------------------------------------ AI BEHAVIOUR END ------------------------------------------------------------ //
 
         //Ticks down the weapon lock allowing the enemy to attack again
         weaponLock -= Time.deltaTime;
@@ -122,6 +114,8 @@ public class AiMovement : EntityClass {
         {
             Destroy(gameObject);
         }
+
+        Debug.Log(distToColossus);
 	}
 
     //Solves the problem of "Is the object left or right of me"
