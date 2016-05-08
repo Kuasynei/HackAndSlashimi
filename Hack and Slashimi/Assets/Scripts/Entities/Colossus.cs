@@ -7,7 +7,7 @@ public class Colossus : EntityClass
 	[SerializeField] bool debugMode = true;
 	[SerializeField] float movementSpeed;
 	[SerializeField] float maxHealth = 100;
-	[SerializeField] float cleft = 1000;
+	[SerializeField] float damage = 1000;
 	[SerializeField] float gateDetectionLength = 5;
 	bool gateToDestroy;
 	Rigidbody rB;
@@ -33,12 +33,13 @@ public class Colossus : EntityClass
 				if(timeSinceLastHit > 5)
 				{
 					gateScript = (Gate)hit.collider.GetComponent("Gate");
-					float gateHealth = gateScript.TakeDamage(cleft);
+					float gateHealth = gateScript.TakeDamage(damage);
 					timeSinceLastHit = 0;
 					Debug.DrawLine (transform.position, hit.point, Color.red, .3f);
 
-					if (debugMode) {
-						Debug.Log ("Colossus dealt " + cleft + " to a Gate!\n" + "The gate has " + gateHealth + " health remaining.");
+					if (debugMode) 
+					{
+						Debug.Log ("Colossus dealt " + damage + " to a Gate!\n" + "The gate has " + gateHealth + " health remaining.");
 					}
 				}
 				Debug.DrawLine(transform.position, hit.point, Color.green);

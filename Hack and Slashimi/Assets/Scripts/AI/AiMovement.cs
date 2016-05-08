@@ -3,12 +3,14 @@ using System.Collections;
 
 public class AiMovement : EntityClass {
 
+	[SerializeField] GameObject healthOrb;
     [SerializeField] GameObject player;
     [SerializeField] GameObject playerColossus;
     [SerializeField] WeaponClass enemyWeapon;
 	[SerializeField] float runSpeed = 4;
 	[SerializeField] float marchSpeed = 2;
 	[SerializeField] float turnSpeed = 1;
+	[SerializeField] int rngDropPercent = 30;
 
     private CharacterController charController;
     //THIS WILL BE CHANGED TO AXE
@@ -135,6 +137,12 @@ public class AiMovement : EntityClass {
         //Checks the health value that is on the EntityClass and destroys the object
         if(health <= 0)
         {
+			int rng = Random.Range(0, 100);
+			if(rng <= rngDropPercent)
+			{
+				Instantiate(healthOrb, transform.position, Quaternion.identity);
+			}
+
             gameObject.SetActive(false);
             EnemySpawner.enemiesSpawned--;
         }
