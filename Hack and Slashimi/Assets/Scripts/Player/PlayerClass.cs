@@ -116,7 +116,7 @@ public class PlayerClass : EntityClass {
 		}
 
 		//UI
-		uI_HP.text = health.ToString();
+		uI_HP.text = Mathf.Round(health).ToString();
 	}
 
 	void FixedUpdate(){
@@ -204,7 +204,8 @@ public class PlayerClass : EntityClass {
 
 	IEnumerator Die() {
 		//Disabling and restarting some variables.
-		float timeToRecharge = 3;
+		float timeToRecharge = 5;
+		float deathLerpSpeed = 0.05f;
 		disableInput = true;
 		rB.useGravity = false;
 		rB.velocity = new Vector3 (0, 0, 0);
@@ -215,17 +216,24 @@ public class PlayerClass : EntityClass {
 		yield return new WaitForSeconds (1f);
 
 		//Returning to spawn point.
-		while (Vector3.Distance (transform.position, spawnPoint.position) > 0.1f) {
-			transform.position = Vector3.Lerp (transform.position, spawnPoint.position, 0.05f);
+		while (Vector3.Distance (transform.position, spawnPoint.position) > 2f) {
+			transform.position = Vector3.Lerp (transform.position, spawnPoint.position, deathLerpSpeed);
 			yield return new WaitForFixedUpdate ();
 		}
 
 		//Recharging health.
-		yield return new WaitForSeconds (0.5f);
-		for (; health < maxHealth; health++) {
-			yield return new WaitForSeconds (timeToRecharge / maxHealth);
+		for (; health < maxHealth;) {
+			transform.position = Vector3.Lerp (transform.position, spawnPoint.position, deathLerpSpeed);
+			health += (Time.fixedDeltaTime * 10000 / timeToRecharge) / maxHealth;
+
+			if (health > maxHealth) {
+				health = maxHealth;
+			}
+			yield return new WaitForFixedUpdate ();
 		}
 
+
+		Vector3.Lerp (transform.position, spawnPoint.position, deathLerpSpeed);
 		yield return new WaitForSeconds (0.5f);
 
 		//Reenabling some features.

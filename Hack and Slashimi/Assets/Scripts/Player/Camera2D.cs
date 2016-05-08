@@ -7,7 +7,6 @@ public class Camera2D : MonoBehaviour {
 	[SerializeField] float hLerpSpeed;
 	[SerializeField] float vLerpSpeed;
 	[SerializeField] float zLayer = -11;
-	[SerializeField] float groundLayer = 0;
 
 	// Update is called once per frame
 	void Update () {
@@ -17,13 +16,9 @@ public class Camera2D : MonoBehaviour {
 		transform.position = Vector3.Lerp (lockedCurrentTransform, lockedTargetTransform, hLerpSpeed * Time.deltaTime);
 
 		//Vertical Lerping
-		Vector3 targetTransformV = new Vector3 (transform.position.x, target.position.y / 2 + groundLayer, transform.position.z);
+		Vector3 targetTransformV = new Vector3 (transform.position.x, target.position.y, transform.position.z);
 		Vector3 currentTransformV = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
 		transform.position = Vector3.Lerp (currentTransformV, targetTransformV, vLerpSpeed * Time.deltaTime);
 
-	}
-
-	void OnTriggerStay(Collider otherColl) {
-		groundLayer = otherColl.transform.position.y;
 	}
 }

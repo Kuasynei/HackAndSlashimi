@@ -4,9 +4,11 @@ using System.Collections.Generic;
 
 public class Colossus : EntityClass 
 {
-	public float movementSpeed;
+	[SerializeField] bool debugMode = true;
+	[SerializeField] float movementSpeed;
 	[SerializeField] float maxHealth = 100;
 	[SerializeField] float cleft = 1000;
+	[SerializeField] float gateDetectionLength = 5;
 	bool gateToDestroy;
 	Rigidbody rB;
 	float timeSinceLastHit = 0.0f;
@@ -18,23 +20,26 @@ public class Colossus : EntityClass
 		rB = GetComponent<Rigidbody> ();
 	}
 
-	void Update()
+	void FixedUpdate()
 	{
-		timeSinceLastHit += Time.deltaTime;
+		timeSinceLastHit += Time.fixedDeltaTime;
 		RaycastHit hit;
-		if(Physics.Raycast(transform.position, Vector3.right, out hit, 1.5f))
+		if(Physics.Raycast(transform.position, Vector3.right, out hit, gateDetectionLength))
 		{
-			if(hit.collider.tag == "Gate")
+			if(hit.collider.CompareTag("Gate"))
 			{
-
 				gateToDestroy = true;
 				rB.velocity = new Vector3(0,0,0);
 				if(timeSinceLastHit > 5)
 				{
 					gateScript = (Gate)hit.collider.GetComponent("Gate");
-					gateScript.TakeDamage(cleft);
+					float gateHealth = gateScript.TakeDamage(cleft);
 					timeSinceLastHit = 0;
 					Debug.DrawLine (transform.position, hit.point, Color.red, .3f);
+
+					if (debugMode) {
+						Debug.Log ("Colossus dealt " + cleft + " to a Gate!\n" + "The gate has " + gateHealth + " health remaining.");
+					}
 				}
 				Debug.DrawLine(transform.position, hit.point, Color.green);
 			}
@@ -43,13 +48,10 @@ public class Colossus : EntityClass
 		{
 			gateToDestroy = false;
 		}
-	}
 
-	void FixedUpdate () 
-	{
 		if(!gateToDestroy)
 		{
-			rB.velocity = new Vector3(movementSpeed / 10,0,0);
+			rB.velocity = new Vector3(movementSpeed / 10, rB.velocity.y, rB.velocity.z);
 		}
 	}
 }
