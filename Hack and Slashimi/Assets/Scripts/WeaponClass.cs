@@ -51,7 +51,7 @@ public class WeaponClass : MonoBehaviour {
 
 			if (otherColl.GetComponent (typeof(EntityClass))) {
 				EntityClass otherEntity = otherColl.GetComponent (typeof(EntityClass)) as EntityClass;
-				Debug.Log(otherColl.name + " has taken " + contactDamage + " damage! Health is now: " + otherEntity.TakeDamage (contactDamage));
+				Debug.Log(otherColl.name + " has taken " + contactDamage + " damage! Health is now: " + otherEntity.TakeDamage (contactDamage, this.transform.root.tag, otherColl.transform.root.tag));
 			}
 		}
 	}

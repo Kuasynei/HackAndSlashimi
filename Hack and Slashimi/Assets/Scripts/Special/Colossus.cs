@@ -16,7 +16,7 @@ public class Colossus : EntityClass
 
 	void Awake () 
 	{
-		health = maxHealth;
+		maxH = maxHealth;
 		rB = GetComponent<Rigidbody> ();
 	}
 
@@ -33,7 +33,7 @@ public class Colossus : EntityClass
 				if(timeSinceLastHit > 5)
 				{
 					gateScript = (Gate)hit.collider.GetComponent("Gate");
-					float gateHealth = gateScript.TakeDamage(damage);
+					float gateHealth = gateScript.TakeDamage(damage, this.transform.root.tag, gateScript.transform.root.tag);
 					timeSinceLastHit = 0;
 					Debug.DrawLine (transform.position, hit.point, Color.red, .3f);
 

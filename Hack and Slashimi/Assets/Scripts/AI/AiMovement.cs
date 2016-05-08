@@ -29,6 +29,8 @@ public class AiMovement : EntityClass {
         charController = GetComponent<CharacterController>();
         enemySword = (Sword)enemyWeapon;
 
+        health = 20;
+
 		commandTick = Random.value; //Staggers commandTicks for all AI so they don't look like robits.
 	}
 	
@@ -181,6 +183,6 @@ public class AiMovement : EntityClass {
 
     public void setResetHealth()
     {
-        health = 10;
+        health = 20;
     }
 }

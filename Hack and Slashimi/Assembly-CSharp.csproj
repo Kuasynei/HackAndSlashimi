@@ -38,17 +38,26 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AI\AiMovement.cs" />
+<<<<<<< HEAD
      <Compile Include="Assets\Scripts\Enemy\Ballista.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemyPool.cs" />
      <Compile Include="Assets\Scripts\Enemy\EnemySpawner.cs" />
+=======
+     <Compile Include="Assets\Scripts\EnemyPool.cs" />
+     <Compile Include="Assets\Scripts\EnemySpawner.cs" />
+     <Compile Include="Assets\Scripts\Entities\Ballista.cs" />
+     <Compile Include="Assets\Scripts\Entities\Colossus.cs" />
+     <Compile Include="Assets\Scripts\Entities\EnemyClass.cs" />
+     <Compile Include="Assets\Scripts\Entities\Gate.cs" />
+>>>>>>> origin/master
      <Compile Include="Assets\Scripts\EntityClass.cs" />
      <Compile Include="Assets\Scripts\HealthPickup.cs" />
      <Compile Include="Assets\Scripts\MenuController.cs" />
@@ -62,10 +71,10 @@
      <Compile Include="Assets\Scripts\Special\Gate.cs" />
      <Compile Include="Assets\Scripts\WeaponClass.cs" />
  <Reference Include="UnityEngine.UI">
- <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

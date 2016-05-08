@@ -1,16 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EntityClass : MonoBehaviour {
+public class EntityClass : MonoBehaviour 
+{
+	protected float maxH = 1;
 	protected float health = 1;
 
-	public float TakeDamage(float damage) {
-		health -= damage;
-		return health;
+	void Start()
+	{
+		health = maxH;
 	}
 
-	public float Heal(float heal) {
-		health += heal;
+	public float TakeDamage(float damage, string attacker, string damageTaker) 
+	{
+        if(attacker != damageTaker)
+        {
+            health -= damage;
+        }
+        else
+        {
+            Debug.Log("DAMAGE NOT VALID");
+        }
+
+        return health;
+    }
+
+	public float Heal(float heal) 
+	{
+		if(health != maxH)
+		{
+			health += heal;
+		}
 		return health;
 	}
 }

@@ -10,7 +10,7 @@ public class PlayerClass : EntityClass {
 	[SerializeField] bool disableInput = false;
 	[SerializeField] Transform spawnPoint;
 	[SerializeField] Text uI_HP;
-	[SerializeField] float maxHealth = 20;
+	[SerializeField] float maxHealth = 100;
 	[SerializeField] float rotationSpeed = 1;
 
 	bool respawning = false;
@@ -51,7 +51,7 @@ public class PlayerClass : EntityClass {
 
 	// Use this for initialization
 	void Awake () {
-		health = maxHealth;
+		maxH = maxHealth;
 		rB = GetComponent<Rigidbody> ();
 		jumpsAvailable = maxJumps;
 		eGFactor = enhancedGravityFactorTM;
@@ -98,11 +98,11 @@ public class PlayerClass : EntityClass {
 
 			//HURT YOURSELF BUTTON
 			if (Input.GetKeyDown (KeyCode.H)) {
-				TakeDamage (100);
+				TakeDamage (100, this.tag, "Self Damage");
 				Debug.Log ("LIFE did 100 damage to " + name + "! " + health + " health remaining.");
 			}
 			if (Input.GetKeyDown (KeyCode.J)) {
-				TakeDamage (50);
+				TakeDamage (50, this.tag, "Self Damage");
 			}
 		}
 			
