@@ -38,16 +38,20 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+      <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+      <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AI\AiMovement.cs" />
+<<<<<<< HEAD
+     <Compile Include="Assets\Scripts\Entities\Ballista.cs" />
+=======
      <Compile Include="Assets\Scripts\EnemyPool.cs" />
      <Compile Include="Assets\Scripts\EnemySpawner.cs" />
+>>>>>>> origin/master
      <Compile Include="Assets\Scripts\Entities\Colossus.cs" />
      <Compile Include="Assets\Scripts\Entities\EnemyClass.cs" />
      <Compile Include="Assets\Scripts\Entities\Gate.cs" />
@@ -57,13 +61,14 @@
      <Compile Include="Assets\Scripts\Player\Camera2D.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerClass.cs" />
      <Compile Include="Assets\Scripts\Player\Sword.cs" />
+     <Compile Include="Assets\Scripts\ProjectileClass.cs" />
      <Compile Include="Assets\Scripts\SetPositionTo.cs" />
      <Compile Include="Assets\Scripts\WeaponClass.cs" />
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
