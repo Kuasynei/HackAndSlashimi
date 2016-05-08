@@ -1,20 +1,4 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Matt_TestWorld.unity
-=======
-<<<<<<< HEAD
 - path: Assets/Mike_TestWorld.unity
-=======
-<<<<<<< HEAD
-- path: Assets/Player Mechanics Test World.unity
-=======
-<<<<<<< HEAD
-- path: Assets/Matt_TestWorld.unity
-=======
-- path: Assets/Mike_TestWorld.unity
->>>>>>> origin/master
->>>>>>> origin/master
->>>>>>> origin/master
->>>>>>> origin/master
   isLoaded: 1
   isActive: 1

@@ -6,6 +6,9 @@ public class AiMovement : EntityClass {
     [SerializeField] GameObject player;
     [SerializeField] GameObject playerColossus;
     [SerializeField] WeaponClass enemyWeapon;
+	[SerializeField] float runSpeed = 4;
+	[SerializeField] float marchSpeed = 2;
+	[SerializeField] float turnSpeed = 1;
 
     private CharacterController charController;
     //THIS WILL BE CHANGED TO AXE
@@ -15,7 +18,7 @@ public class AiMovement : EntityClass {
     private float distToPlayer;
     private float distToColossus;
     private float weaponLock = 0;
-
+	private float commandTick; //Allows certain orders to run for cyclically.
 	
     // Use this for initialization
 	void Start () 
@@ -23,11 +26,17 @@ public class AiMovement : EntityClass {
         //Store the character controller and the enemy sword/weapon
         charController = GetComponent<CharacterController>();
         enemySword = (Sword)enemyWeapon;
+
+		commandTick = Random.value; //Staggers commandTicks for all AI so they don't look like robits.
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+		//
+		if (commandTick <= 0) commandTick = 1f;
+		commandTick -= Time.deltaTime; 
+
         //Check distance from the enemy to the player
         distToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
@@ -41,45 +50,61 @@ public class AiMovement : EntityClass {
         //@note: the basic else functionality will have to change because enemies will not only spawn on the right of the map
         if(distToColossus < 15)
         {
-            if(distToColossus > 4)
+            if(distToColossus > 7)
             {
                 //Move toward the colossus
                 Vector3 headingDir = playerColossus.transform.position - transform.position;
-                float leftOrRightValue = AngleDir(transform.forward, headingDir, transform.up);
+				float leftOrRightValue = AngleDir(-Vector3.forward, headingDir, transform.up); //I replaced transform.forward with -vector3.forward
+				Debug.Log (transform.forward + " || " + headingDir + " @@ " + leftOrRightValue);
                 if (leftOrRightValue != 0)
                 {
-                    transform.rotation = Quaternion.LookRotation(leftOrRightValue * Vector3.right);
+					transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
                 }
 
-                charController.SimpleMove(new Vector3(leftOrRightValue * 4, 0, 0));
+				charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
             }
-            else if( distToColossus < 4)
-            {                
-                if(weaponLock <= 0)
-                {
-                    //Rotate and smack the colossus
-                    transform.rotation = Quaternion.LookRotation(new Vector3(playerColossus.transform.position.x, 0, playerColossus.transform.position.z)
-                                                                   - new Vector3(transform.position.x, 0, transform.position.z));
-                    enemySword.BasicAttack(0.4f, 1);
-                    weaponLock = 1.0f;
+			else if ( distToColossus < 7 && commandTick <= 0.5f)
+            {    
+				//Rotate...
+				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation (new Vector3 (playerColossus.transform.position.x, 0, playerColossus.transform.position.z) 
+					- new Vector3 (transform.position.x, 0, transform.position.z)), Time.deltaTime * turnSpeed);
+				
+				if (weaponLock <= 0)
+				{
+					//...and smack the colossus
+					enemySword.BasicAttack (0.4f, 1);
+					weaponLock = 1.0f;
 
-                    //Stop and look at the colossus
-                    charController.SimpleMove(Vector3.zero);
-                }
+					//Stop and look at the colossus
+					charController.SimpleMove (Vector3.zero);
+				}
             }
+			else if (distToColossus > 6.65)
+			{
+				//Move toward the colossus
+				Vector3 headingDir = playerColossus.transform.position - transform.position;
+				float leftOrRightValue = AngleDir(-Vector3.forward, headingDir, transform.up); //I replaced transform.forward with -vector3.forward
+				Debug.Log (transform.forward + " || " + headingDir + " @@ " + leftOrRightValue);
+				if (leftOrRightValue != 0)
+				{
+					transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
+				}
+
+				charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
+			}
         }
         else if(distToPlayer < 10)
         {
             if (distToPlayer > 1.5f)
             {
                 Vector3 headingDir = player.transform.position - transform.position;
-                float leftOrRightValue = AngleDir(transform.forward, headingDir, transform.up);
+				float leftOrRightValue = AngleDir(-Vector3.forward, headingDir, transform.up);
                 if(leftOrRightValue != 0)
                 {
-                    transform.rotation = Quaternion.LookRotation(leftOrRightValue * Vector3.right);
+					transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
                 }
 
-                charController.SimpleMove(new Vector3(leftOrRightValue * 4, 0, 0));
+				charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
             }
             else if (distToPlayer < 1.5f)
             {
@@ -95,12 +120,12 @@ public class AiMovement : EntityClass {
         {
             Vector3 headingDir = playerColossus.transform.position - transform.position;
             headingDir.z = 0;
-            float leftOrRightValue = AngleDir(transform.forward, headingDir, transform.up);
+			float leftOrRightValue = AngleDir(-Vector3.forward, headingDir, transform.up);
             if (leftOrRightValue != 0)
             {
-                transform.rotation = Quaternion.LookRotation(leftOrRightValue * Vector3.right);
+				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
             }
-            charController.SimpleMove(new Vector3(leftOrRightValue * 2, 0, 0));
+			charController.SimpleMove(new Vector3(leftOrRightValue * marchSpeed, 0, 0));
 
         }
 
