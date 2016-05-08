@@ -55,7 +55,6 @@ public class AiMovement : EntityClass {
                 //Move toward the colossus
                 Vector3 headingDir = playerColossus.transform.position - transform.position;
 				float leftOrRightValue = AngleDir(-Vector3.forward, headingDir, transform.up); //I replaced transform.forward with -vector3.forward
-				Debug.Log (transform.forward + " || " + headingDir + " @@ " + leftOrRightValue);
                 if (leftOrRightValue != 0)
                 {
 					transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
@@ -84,7 +83,6 @@ public class AiMovement : EntityClass {
 				//Move toward the colossus
 				Vector3 headingDir = playerColossus.transform.position - transform.position;
 				float leftOrRightValue = AngleDir(-Vector3.forward, headingDir, transform.up); //I replaced transform.forward with -vector3.forward
-				Debug.Log (transform.forward + " || " + headingDir + " @@ " + leftOrRightValue);
 				if (leftOrRightValue != 0)
 				{
 					transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
@@ -137,10 +135,9 @@ public class AiMovement : EntityClass {
         //Checks the health value that is on the EntityClass and destroys the object
         if(health <= 0)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+            EnemySpawner.enemiesSpawned--;
         }
-
-        Debug.Log(distToColossus);
 	}
 
     //Solves the problem of "Is the object left or right of me"
@@ -162,5 +159,20 @@ public class AiMovement : EntityClass {
         {
             return 0f;
         }
+    }
+
+    public void setPlayer(GameObject p)
+    {
+        player = p;
+    }
+
+    public void setPlayerColossus(GameObject pC)
+    {
+        playerColossus = pC;
+    }
+
+    public void setResetHealth()
+    {
+        health = 10;
     }
 }

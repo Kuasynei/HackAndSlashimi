@@ -46,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AI\AiMovement.cs" />
+     <Compile Include="Assets\Scripts\EnemyPool.cs" />
+     <Compile Include="Assets\Scripts\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\Entities\Colossus.cs" />
      <Compile Include="Assets\Scripts\Entities\EnemyClass.cs" />
      <Compile Include="Assets\Scripts\Entities\Gate.cs" />
