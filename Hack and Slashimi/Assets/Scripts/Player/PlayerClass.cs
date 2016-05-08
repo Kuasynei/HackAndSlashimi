@@ -49,6 +49,9 @@ public class PlayerClass : EntityClass {
 
 	List<ContactPoint> groundContacts = new List<ContactPoint> ();
 
+    //Storing the Colossus for use later
+    [SerializeField] GameObject Colossus;
+
 	// Use this for initialization
 	void Awake () {
 		maxH = maxHealth;
@@ -98,11 +101,11 @@ public class PlayerClass : EntityClass {
 
 			//HURT YOURSELF BUTTON
 			if (Input.GetKeyDown (KeyCode.H)) {
-				TakeDamage (100);
+				TakeDamage (100, this.tag, "Self Damage");
 				Debug.Log ("LIFE did 100 damage to " + name + "! " + health + " health remaining.");
 			}
 			if (Input.GetKeyDown (KeyCode.J)) {
-				TakeDamage (50);
+				TakeDamage (50, this.tag, "Self Damage");
 			}
 		}
 			
@@ -244,4 +247,9 @@ public class PlayerClass : EntityClass {
 
 		respawning = false;
 	}
+
+    public GameObject getColossus()
+    {
+        return Colossus;
+    }
 }

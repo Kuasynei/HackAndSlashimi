@@ -11,11 +11,19 @@ public class EntityClass : MonoBehaviour
 		health = maxH;
 	}
 
-	public float TakeDamage(float damage) 
+	public float TakeDamage(float damage, string attacker, string damageTaker) 
 	{
-		health -= damage;
-		return health;
-	}
+        if(attacker != damageTaker)
+        {
+            health -= damage;
+        }
+        else
+        {
+            Debug.Log("DAMAGE NOT VALID");
+        }
+
+        return health;
+    }
 
 	public float Heal(float heal) 
 	{

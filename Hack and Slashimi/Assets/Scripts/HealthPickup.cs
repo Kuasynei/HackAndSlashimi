@@ -13,10 +13,10 @@ public class HealthPickup : MonoBehaviour
 	{
 		if(col.gameObject.tag == "Player")
 		{
-			playerScript = (PlayerClass)col.gameObject.GetComponent("PlayerClass");
+			playerScript = (PlayerClass)col.transform.root.GetComponent("PlayerClass");
 			playerScript.Heal(playerHealAmount);
 
-			colScript = (Colossus)FindObjectOfType(typeof(Colossus));
+            colScript = playerScript.getColossus().GetComponent<Colossus>();
 			colScript.Heal(colossusHealAmount);
 
 			Destroy(gameObject);
