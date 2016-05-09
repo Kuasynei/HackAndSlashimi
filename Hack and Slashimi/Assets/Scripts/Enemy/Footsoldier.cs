@@ -1,16 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AiMovement : EntityClass {
+public class Footsoldier : EntityClass {
 
+	[Header("Main")]
 	[SerializeField] GameObject healthOrb;
     [SerializeField] GameObject player;
     [SerializeField] GameObject playerColossus;
-    [SerializeField] WeaponClass enemyWeapon;
+    [SerializeField] MeleeWeaponClass enemyWeapon;
+
+	[Header("Movement")]
 	[SerializeField] float runSpeed = 4;
 	[SerializeField] float marchSpeed = 2;
 	[SerializeField] float turnSpeed = 1;
+
+	[Header("Combat Stats")]
+	[SerializeField] float maxHealth;
+	[SerializeField] float basicAttackDamage = 10;
 	[SerializeField] int rngDropPercent = 30;
+	[SerializeField] faction setFaction = faction.badGuys;
 
     private CharacterController charController;
     //THIS WILL BE CHANGED TO AXE
@@ -21,16 +29,22 @@ public class AiMovement : EntityClass {
     private float distToColossus;
     private float weaponLock = 0;
 	private float commandTick; //Allows certain orders to run for cyclically.
-	
+
+	void Awake()
+	{
+		//Store the character controller and the enemy sword/weapon
+		charController = GetComponent<CharacterController>();
+		enemySword = enemyWeapon as Sword;
+
+		maxH = maxHealth;
+		health = maxH;
+
+		myFaction = setFaction;
+	}
+
     // Use this for initialization
 	void Start () 
     {
-        //Store the character controller and the enemy sword/weapon
-        charController = GetComponent<CharacterController>();
-        enemySword = (Sword)enemyWeapon;
-
-        health = 20;
-
 		commandTick = Random.value; //Staggers commandTicks for all AI so they don't look like robits.
 	}
 	
@@ -75,7 +89,8 @@ public class AiMovement : EntityClass {
 				if (weaponLock <= 0)
 				{
 					//...and smack the colossus
-					enemySword.BasicAttack (0.4f, 1);
+					DamageInfo orcDamagePackage = new DamageInfo(basicAttackDamage, this.gameObject, myFaction);
+					enemySword.BasicAttack (0.4f, 1, orcDamagePackage);
 					weaponLock = 1.0f;
 
 					//Stop and look at the colossus
@@ -113,7 +128,8 @@ public class AiMovement : EntityClass {
                 charController.SimpleMove(Vector3.zero);
                 if(weaponLock <= 0)
                 {
-                    enemySword.BasicAttack(0.4f, 1);
+					DamageInfo orcDamagePackage = new DamageInfo(basicAttackDamage, this.gameObject, myFaction);
+					enemySword.BasicAttack (0.4f, 1, orcDamagePackage);
                     weaponLock = 1.0f;
                 }
             }

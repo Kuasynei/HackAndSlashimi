@@ -53,7 +53,9 @@ public class Colossus : EntityClass
                     if (timeSinceLastHit > 5)
                     {
                         gateScript = (Gate)hit.collider.GetComponent("Gate");
-                        float gateHealth = gateScript.TakeDamage(damage, this.transform.root.tag, gateScript.transform.root.tag);
+
+						DamageInfo breakTheGatePackage = new DamageInfo (damage, this.gameObject, faction.goodGuys);
+						float gateHealth = gateScript.TakeDamage(breakTheGatePackage);
                         timeSinceLastHit = 0;
                         Debug.DrawLine(transform.position, hit.point, Color.red, .3f);
 

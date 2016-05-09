@@ -6,47 +6,58 @@ using UnityEngine.UI;
 
 public class PlayerClass : EntityClass {
 
+	[Header("Main")]
 	[SerializeField] bool debugMode = true;
 	[SerializeField] bool disableInput = false;
 	[SerializeField] Transform spawnPoint;
 	[SerializeField] Text uI_HP;
-	[SerializeField] float maxHealth = 100;
-	[SerializeField] float rotationSpeed = 1;
 
-	bool respawning = false;
-	int facing = 1; //-1 Facing Left / 1 Facing Right
-	Vector3 lookOrb = new Vector3(0,0,0); //Orbits the player clockwise when they turn to make all rotations clockwise.
-	Collider coll;
-
-	//Horizontal Movement
+	[Header("Horizontal Movement")]
 	[SerializeField] float acceleration = 5;
 	[SerializeField] float maxHorzSpeed = 10;
 	[SerializeField] float slidingFactor = 3;
 
-	//Jumping
+	[Header("Rotation")]
+	[SerializeField] float rotationSpeed = 1;
+
+	[Header("Aerial Stats")]
 	[SerializeField] float jumpPower = 2;
 	[SerializeField] float jumpDetectionLine = 0.6f; //If a surface is this far under the player's origin
 	[SerializeField] float airAccelDampener = 2;
 	[SerializeField] float maxJumps = 2; //Maximum number of jumps, two for double jump, 0 and you can't jump at all.
 	[SerializeField] float enhancedGravityFactorTM = 2;
 	[SerializeField] float bouncyHouseFactor = 2; //Increases jump power against weird angles that aren't straight up, to make them feel better to jump against.
+
+	[Header("Combat")]
+	[SerializeField] float maxHealth = 100;
+	[SerializeField] float basicAttackDamage = 10;
+	[SerializeField] faction setFaction;
+	[SerializeField] MeleeWeaponClass myBlade;
+
+	////Private Vars
+	//Player Inputs
+	float hAxis;
+	float vAxis;
+	float fire1Axis;
+
+	//Jumping
 	float jumpGuideline = 0.2f; //This is so that you don't waste your double jumps. 
 	float jumpCooldown = 0; //You can only jump once per half second.
 	float jumpsAvailable;
 	float eGFactor; //ENHANCED GRAVITY FACTOR TM
 	bool onGround;
 
-	//Player Inputs
-	float hAxis;
-	float vAxis;
-	float fire1Axis;
-
-	//Weapons
-	[SerializeField] WeaponClass myBlade;
+	//Combat
+	bool respawning = false;
 	float weaponLock = 0; //Prevents the player from launching multiple attack commands before the previous finishes.
 
-	Rigidbody rB;
+	//Rotation
+	int facing = 1; //-1 Facing Left / 1 Facing Right
+	Vector3 lookOrb = new Vector3(0,0,0); //Orbits the player clockwise when they turn to make all rotations clockwise.
 
+	//Other
+	Collider coll;
+	Rigidbody rB;
 	List<ContactPoint> groundContacts = new List<ContactPoint> ();
 
     //Storing the Colossus for use later
@@ -59,6 +70,7 @@ public class PlayerClass : EntityClass {
 		jumpsAvailable = maxJumps;
 		eGFactor = enhancedGravityFactorTM;
 		coll = GetComponent<Collider> ();
+		myFaction = setFaction; 
 	}
 	
 	// Update is called once per frame
@@ -101,11 +113,14 @@ public class PlayerClass : EntityClass {
 
 			//HURT YOURSELF BUTTON
 			if (Input.GetKeyDown (KeyCode.H)) {
-				TakeDamage (100, this.tag, "Self Damage");
-				Debug.Log ("LIFE did 100 damage to " + name + "! " + health + " health remaining.");
+				DamageInfo suicidePackage = new DamageInfo (health, this.gameObject, faction.neutral);
+				TakeDamage (suicidePackage);
+				Debug.Log ("LIFE did " + health + " damage to " + name + "! " + health + " health remaining.");
 			}
 			if (Input.GetKeyDown (KeyCode.J)) {
-				TakeDamage (50, this.tag, "Self Damage");
+				DamageInfo suicidePackage = new DamageInfo (50, this.gameObject, faction.neutral);
+				TakeDamage (suicidePackage);
+				Debug.Log ("LIFE did " + 50 + " damage to " + name + "! " + health + " health remaining.");
 			}
 		}
 			
@@ -113,7 +128,8 @@ public class PlayerClass : EntityClass {
 		weaponLock -= Time.deltaTime;
 		if (fire1Axis != 0 && weaponLock <= 0) {
 			if (myBlade.GetType () == typeof(Sword)){
-				(myBlade as Sword).BasicAttack (0.4f, 2);
+				DamageInfo basicAttackPackage = new DamageInfo (basicAttackDamage, this.gameObject, faction.goodGuys);
+				(myBlade as Sword).BasicAttack (0.4f, 2, basicAttackPackage);
 				weaponLock = 0.5f;
 			}
 		}

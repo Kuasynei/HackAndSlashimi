@@ -28,11 +28,11 @@ public class EnemySpawner : MonoBehaviour {
     {
         distToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
-        if (distToPlayer >= 30)
+		if (distToPlayer >= 30 && player.transform.position.x > transform.position.x)
         {
             if (spawnTimer <= 0 && enemiesSpawned < MAXSpawnedEnemies)
             {
-                Debug.Log("Ding");
+                //Debug.Log("Ding");
                 for (int i = 0; i < nEnemiesToSpawn; i++)
                 {
                     GameObject temp = oP.GetFromPool();
@@ -40,13 +40,13 @@ public class EnemySpawner : MonoBehaviour {
                     temp.SetActive(true);
                     temp.transform.position = new Vector3(transform.position.x * i / 4, transform.position.y, 0);
                     temp.transform.rotation = transform.rotation;
-                    temp.GetComponent<AiMovement>().setPlayer(player);
-                    temp.GetComponent<AiMovement>().setPlayerColossus(colossus);
-                    temp.GetComponent<AiMovement>().setResetHealth(); 
+                    temp.GetComponent<Footsoldier>().setPlayer(player);
+                    temp.GetComponent<Footsoldier>().setPlayerColossus(colossus);
+                    temp.GetComponent<Footsoldier>().setResetHealth(); 
 
                     enemiesSpawned++;
 
-                    Debug.Log("Dong");
+                    //Debug.Log("Dong");
                 }
 
                 spawnTimer = 3;

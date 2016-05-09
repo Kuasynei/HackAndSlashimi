@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Sword : WeaponClass {
+public class Sword : MeleeWeaponClass {
 
 	[SerializeField] Color debugDeadlinessColor;
 	MeshRenderer mR;
@@ -11,7 +11,9 @@ public class Sword : WeaponClass {
 	}
 
 	//This attack ticks three times over 0.6 seconds, changing color when lethal.
-	public void BasicAttack(float attackDuration, int ticksOfDamage) {
+	public void BasicAttack(float attackDuration, int ticksOfDamage, DamageInfo damagePackage) {
+		myDamagePackage = damagePackage;
+		contactDamage = damagePackage.damage;
 		StartCoroutine (execBasicAttack(attackDuration, ticksOfDamage));
 	}
 

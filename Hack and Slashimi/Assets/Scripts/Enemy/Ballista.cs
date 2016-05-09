@@ -3,19 +3,30 @@ using System.Collections;
 
 public class Ballista : EnemyClass {
 
+	[Header("Main")]
 	[SerializeField] bool debugMode = true;
+	[SerializeField] faction setFaction = faction.neutral;
 	[SerializeField] GameObject bolt;
 	[SerializeField] Transform boltSpawnPoint;
+
+	[Header("Firing")]
+	[SerializeField] float damagePerShot = 200;
 	[SerializeField] float secondsToReload = 7;
 	[SerializeField] float rotationSpeed = 10;
 	[SerializeField] float projectileSpeed = 50;
-	[SerializeField] float leadTarget = 10;
+	[SerializeField] float leadTarget = 1; //Aims in front of the Colossus by an amount, does not do perfect calculations.
+	[SerializeField] float randomization = 1; //Causes the ballista shots to scatter a bit, or a lot.
 
 	[Range (0,1)]
 	[SerializeField] float arcBias = 0; //0 minimum arc, 1 maximum arc.
 
 	float fireCooldown = 0;
 	Transform targetTransform = null;
+
+	void Awake()
+	{
+		myFaction = setFaction;
+	}
 
 	void Update()
 	{
@@ -52,6 +63,10 @@ public class Ballista : EnemyClass {
 		newBoltRB.isKinematic = true;
 		newBolt.transform.SetParent (transform);
 
+		//Giving the bolt a damage package to carry with them.
+		DamageInfo fromParisWithlove = new DamageInfo(damagePerShot, this.gameObject, myFaction);
+		newBolt.GetComponent<BallistaBolt> ().giveDamagePackage (fromParisWithlove);
+
 		while ((Time.time - timeFrame) < 2)
 		{
 			Vector3 ballisticDirection = calculateBallisticAngle();
@@ -79,9 +94,12 @@ public class Ballista : EnemyClass {
 	//Ballistic Arc Code
 	Vector3 calculateBallisticAngle ()
 	{
-		
+		//Target leading is not perfect here. In order to properly lead the target along with its velocity, you must calculate a NEW ANGLE
+		//that includes TRAVEL TIME over DISTANCE to dynamically change leadTarget.
+
 		//The target's position, offset to include the target's velocity.
 		Vector3 targetOffsetPosition = targetTransform.position + (targetVelocity() * Time.fixedDeltaTime * leadTarget * projectileSpeed);
+		targetOffsetPosition += new Vector3 (Random.value * randomization, Random.value * randomization, Random.value * randomization); //Randomization if applicable.
 		Vector3 targetOffsetPositionXZ = new Vector3(targetOffsetPosition.x, boltSpawnPoint.position.y, targetOffsetPosition.z);
 
 		float distToTargetXZ = Vector3.Distance(boltSpawnPoint.position, targetOffsetPositionXZ); //X
