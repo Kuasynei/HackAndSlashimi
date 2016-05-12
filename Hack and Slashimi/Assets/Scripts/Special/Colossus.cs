@@ -9,10 +9,12 @@ public class Colossus : EntityClass
 	[SerializeField] float maxHealth = 100;
 	[SerializeField] float damage = 1000;
 	[SerializeField] float gateDetectionLength = 5;
-	bool gateToDestroy;
+
+    bool gateToDestroy;
 	Rigidbody rB;
 	float timeSinceLastHit = 0.0f;
 	Gate gateScript;
+    Vector3 deathPosition;
 
     //Colossus death variables
     private bool isDead = false;
@@ -37,8 +39,13 @@ public class Colossus : EntityClass
             if(health > 50)
             {
                 isDead = false;
+                transform.position = deathPosition;
+                deathPosition = Vector3.zero;
                 gameObject.SetActive(true);
             }
+
+            deathPosition = transform.position;
+            transform.position = new Vector3(0, 1000, 0);
         }
         else
         {
@@ -80,4 +87,10 @@ public class Colossus : EntityClass
 
 		
 	}
+
+    public bool getIsDead()
+    {
+        //Return true if dead, false if alive
+        return isDead;
+    }
 }

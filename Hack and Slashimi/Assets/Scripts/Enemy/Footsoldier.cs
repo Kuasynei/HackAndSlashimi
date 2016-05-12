@@ -136,7 +136,17 @@ public class Footsoldier : EntityClass {
         }
         else
         {
-            Vector3 headingDir = playerColossus.transform.position - transform.position;
+            Vector3 defaultTarget;
+            if (playerColossus.activeInHierarchy)
+            {
+                defaultTarget = playerColossus.transform.position;
+            }
+            else
+            {
+                defaultTarget = player.transform.position;
+            }
+
+            Vector3 headingDir = defaultTarget - transform.position;
             headingDir.z = 0;
 			float leftOrRightValue = AngleDir(-Vector3.forward, headingDir, transform.up);
             if (leftOrRightValue != 0)

@@ -28,7 +28,7 @@ public class EnemySpawner : MonoBehaviour {
     {
         distToPlayer = Vector3.Distance(player.transform.position, transform.position);
 
-		if (distToPlayer >= 30 && player.transform.position.x > transform.position.x)
+		if (distToPlayer >= 30)
         {
             if (spawnTimer <= 0 && enemiesSpawned < MAXSpawnedEnemies)
             {
@@ -38,7 +38,7 @@ public class EnemySpawner : MonoBehaviour {
                     GameObject temp = oP.GetFromPool();
 
                     temp.SetActive(true);
-                    temp.transform.position = new Vector3(transform.position.x * i / 4, transform.position.y, 0);
+                    temp.transform.position = new Vector3(transform.position.x * i / 4, transform.position.y , 0);
                     temp.transform.rotation = transform.rotation;
                     temp.GetComponent<Footsoldier>().setPlayer(player);
                     temp.GetComponent<Footsoldier>().setPlayerColossus(colossus);
