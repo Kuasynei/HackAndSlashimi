@@ -18,28 +18,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		Policies = $0
-		$0.TextStylePolicy = $1
-		$1.inheritsSet = null
-		$1.scope = text/x-csharp
-		$0.CSharpFormattingPolicy = $2
-		$2.SimplePropertyFormatting = ForceNewLine
-		$2.AutoPropertyFormatting = ForceNewLine
-		$2.AnonymousMethodBraceStyle = NextLine
-		$2.PropertyBraceStyle = NextLine
-		$2.PropertyGetBraceStyle = NextLine
-		$2.EventBraceStyle = NextLine
-		$2.EventAddBraceStyle = NextLine
-		$2.EventRemoveBraceStyle = NextLine
-		$2.StatementBraceStyle = NextLine
-		$2.ElseNewLinePlacement = NewLine
-		$2.ElseIfNewLinePlacement = NewLine
-		$2.CatchNewLinePlacement = NewLine
-		$2.FinallyNewLinePlacement = NewLine
-		$2.WhileNewLinePlacement = DoNotCare
-		$2.AfterDelegateDeclarationParameterComma = True
-		$2.inheritsSet = Mono
-		$2.inheritsScope = text/x-csharp
-		$2.scope = text/x-csharp
+		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal

@@ -49,6 +49,8 @@ public class EntityClass : MonoBehaviour
 		if(health != maxH)
 		{
 			health += heal;
+
+            Debug.Log("Heal Run");
 		}
 		return health;
 	}

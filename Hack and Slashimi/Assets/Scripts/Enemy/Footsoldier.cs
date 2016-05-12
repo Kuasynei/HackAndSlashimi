@@ -137,7 +137,7 @@ public class Footsoldier : EntityClass {
         else
         {
             Vector3 defaultTarget;
-            if (playerColossus.activeInHierarchy)
+            if (!playerColossus.GetComponent<Colossus>().getIsDead())
             {
                 defaultTarget = playerColossus.transform.position;
             }

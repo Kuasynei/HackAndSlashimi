@@ -16,8 +16,8 @@ public class HealthPickup : MonoBehaviour
 			playerScript = (PlayerClass)col.transform.root.GetComponent("PlayerClass");
 			playerScript.Heal(playerHealAmount);
 
-            colScript = playerScript.getColossus().GetComponent<Colossus>();
-			colScript.Heal(colossusHealAmount);
+            //colScript =
+            colScript.Heal(colossusHealAmount);
 
 			Destroy(gameObject);
 		}

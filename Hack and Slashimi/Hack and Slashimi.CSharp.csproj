@@ -58,21 +58,28 @@
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Colossus.cs" />
+    <Compile Include="Assets\Scripts\Enemy\Ballista.cs" />
+    <Compile Include="Assets\Scripts\Enemy\BallistaBolt.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyPool.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemySpawner.cs" />
+    <Compile Include="Assets\Scripts\Enemy\Footsoldier.cs" />
     <Compile Include="Assets\Scripts\EnemyClass.cs" />
     <Compile Include="Assets\Scripts\EntityClass.cs" />
-    <Compile Include="Assets\Scripts\PlayerClass.cs" />
+    <Compile Include="Assets\Scripts\MeleeWeaponClass.cs" />
+    <Compile Include="Assets\Scripts\MenuController.cs" />
+    <Compile Include="Assets\Scripts\Player\Camera2D.cs" />
+    <Compile Include="Assets\Scripts\Player\PlayerClass.cs" />
+    <Compile Include="Assets\Scripts\Player\Sword.cs" />
+    <Compile Include="Assets\Scripts\SetPositionTo.cs" />
+    <Compile Include="Assets\Scripts\Special\Colossus.cs" />
+    <Compile Include="Assets\Scripts\Special\EnemyColossus.cs" />
+    <Compile Include="Assets\Scripts\Special\Gate.cs" />
+    <Compile Include="Assets\Scripts\Special\HealthPickup.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

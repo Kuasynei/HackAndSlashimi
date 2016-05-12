@@ -34,14 +34,14 @@ public class Colossus : EntityClass
 
         if(isDead)
         {
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
 
             if(health > 50)
             {
                 isDead = false;
                 transform.position = deathPosition;
                 deathPosition = Vector3.zero;
-                gameObject.SetActive(true);
+                //gameObject.SetActive(true);
             }
 
             deathPosition = transform.position;
@@ -85,8 +85,15 @@ public class Colossus : EntityClass
             }
         }
 
-		
-	}
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            DamageInfo suicidePackage = new DamageInfo(1, this.gameObject, faction.neutral);
+            TakeDamage(suicidePackage);
+            Debug.Log("LIFE did " + health + " damage to " + name + "! " + health + " health remaining.");
+        }
+
+
+    }
 
     public bool getIsDead()
     {
