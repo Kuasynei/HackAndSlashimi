@@ -75,10 +75,19 @@ public class PlayerClass : EntityClass {
 	
 	// Update is called once per frame
 	void Update () {
+        //The death check is updated with checking if the colossus is alive or not. If it is dead then the game is over.
 		if (health <= 0 && !respawning) {
-			health = 0;
-			respawning = true;
-			StartCoroutine ("Die");
+            if(Colossus.GetComponent<Colossus>().getIsDead())
+            {
+                //Game Over
+            }
+            else
+            {
+                health = 0;
+                respawning = true;
+                StartCoroutine("Die");
+            }
+			
 		}
 
 		//Player Input
@@ -263,9 +272,4 @@ public class PlayerClass : EntityClass {
 
 		respawning = false;
 	}
-
-    public GameObject getColossus()
-    {
-        return Colossus;
-    }
 }

@@ -36,7 +36,7 @@ public class Colossus : EntityClass
         {
             //gameObject.SetActive(false);
 
-            if(health > 50)
+            if(health > 20)
             {
                 isDead = false;
                 transform.position = deathPosition;
