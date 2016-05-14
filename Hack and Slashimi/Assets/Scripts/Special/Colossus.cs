@@ -23,6 +23,8 @@ public class Colossus : EntityClass
 	{
 		maxH = maxHealth;
 		rB = GetComponent<Rigidbody> ();
+
+		GameManager.SetPColossus (this.gameObject);
 	}
 
 	void FixedUpdate()

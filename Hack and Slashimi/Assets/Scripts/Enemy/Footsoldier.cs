@@ -5,8 +5,6 @@ public class Footsoldier : EntityClass {
 
 	[Header("Main")]
 	[SerializeField] GameObject healthOrb;
-    [SerializeField] GameObject player;
-    [SerializeField] GameObject playerColossus;
     [SerializeField] MeleeWeaponClass enemyWeapon;
 
 	[Header("Movement")]
@@ -23,12 +21,15 @@ public class Footsoldier : EntityClass {
     private CharacterController charController;
     //THIS WILL BE CHANGED TO AXE
     private Sword enemySword;
-    
+	private GameObject player;
+	private GameObject playerColossus;
 
     private float distToPlayer;
     private float distToColossus;
     private float weaponLock = 0;
 	private float commandTick; //Allows certain orders to run for cyclically.
+
+
 
 	void Awake()
 	{
@@ -40,6 +41,8 @@ public class Footsoldier : EntityClass {
 		health = maxH;
 
 		myFaction = setFaction;
+		player = GameManager.GetPlayer ();
+		playerColossus = GameManager.GetPColossus();
 	}
 
     // Use this for initialization

@@ -71,8 +71,10 @@ public class PlayerClass : EntityClass {
 		eGFactor = enhancedGravityFactorTM;
 		coll = GetComponent<Collider> ();
 		myFaction = setFaction; 
+
+		GameManager.SetPlayer (this.gameObject);
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
         //The death check is updated with checking if the colossus is alive or not. If it is dead then the game is over.
