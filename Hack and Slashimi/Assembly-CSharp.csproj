@@ -45,24 +45,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\Enemy\Ballista.cs" />
-     <Compile Include="Assets\Scripts\Enemy\BallistaBolt.cs" />
-     <Compile Include="Assets\Scripts\Enemy\EnemyPool.cs" />
-     <Compile Include="Assets\Scripts\Enemy\EnemySpawner.cs" />
+     <Compile Include="Assets\Scripts\Enemy\Ballista\Ballista.cs" />
+     <Compile Include="Assets\Scripts\Enemy\Ballista\BallistaBolt.cs" />
+     <Compile Include="Assets\Scripts\Enemy\Enemy Spawning\EnemyPool.cs" />
+     <Compile Include="Assets\Scripts\Enemy\Enemy Spawning\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\Enemy\Footsoldier.cs" />
      <Compile Include="Assets\Scripts\EnemyClass.cs" />
      <Compile Include="Assets\Scripts\EntityClass.cs" />
-     <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\MeleeWeaponClass.cs" />
      <Compile Include="Assets\Scripts\MenuController.cs" />
-     <Compile Include="Assets\Scripts\Player\Camera2D.cs" />
+     <Compile Include="Assets\Scripts\Player\Camera\Camera2D.cs" />
+     <Compile Include="Assets\Scripts\Player\Camera\CameraRail.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerClass.cs" />
      <Compile Include="Assets\Scripts\Player\Sword.cs" />
-     <Compile Include="Assets\Scripts\SetPositionTo.cs" />
      <Compile Include="Assets\Scripts\Special\Colossus.cs" />
      <Compile Include="Assets\Scripts\Special\EnemyColossus.cs" />
      <Compile Include="Assets\Scripts\Special\Gate.cs" />
      <Compile Include="Assets\Scripts\Special\HealthPickup.cs" />
+     <Compile Include="Assets\Scripts\Utility\SetPositionTo.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

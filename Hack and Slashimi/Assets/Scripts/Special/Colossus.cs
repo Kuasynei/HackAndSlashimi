@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Colossus : EntityClass 
 {
@@ -9,6 +10,7 @@ public class Colossus : EntityClass
 	[SerializeField] float maxHealth = 100;
 	[SerializeField] float damage = 1000;
 	[SerializeField] float gateDetectionLength = 5;
+	[SerializeField] Text uI_HP;
 
     bool gateToDestroy;
 	Rigidbody rB;
@@ -24,7 +26,13 @@ public class Colossus : EntityClass
 		maxH = maxHealth;
 		rB = GetComponent<Rigidbody> ();
 
-		GameManager.SetPColossus (this.gameObject);
+		GameController.SetPColossus (this.gameObject);
+	}
+
+	void Update()
+	{
+		//UI STUFF
+		uI_HP.text = Mathf.Round(health).ToString();
 	}
 
 	void FixedUpdate()

@@ -5,14 +5,14 @@ public class EnemySpawner : MonoBehaviour {
 
     //[SerializeField] GameObject enemyToSpawn;
     [SerializeField] int nEnemiesToSpawn;
-    [SerializeField] GameObject colossus;
-    [SerializeField] GameObject player;
     [SerializeField] int MAXSpawnedEnemies;
 
     private float spawnTimer;
+	private float distToPlayer;
     public static int enemiesSpawned;
     private GameObject enemy;
-    private float distToPlayer;
+	private GameObject colossus;
+	private GameObject player;
     private EnemyPool oP;
 
 	// Use this for initialization
@@ -22,8 +22,8 @@ public class EnemySpawner : MonoBehaviour {
 
         oP = GetComponent<EnemyPool>();
 
-		colossus = GameManager.GetPColossus ();
-		player = GameManager.GetPlayer ();
+		colossus = GameController.GetPColossus ();
+		player = GameController.GetPlayer ();
 	}
 	
 	// Update is called once per frame

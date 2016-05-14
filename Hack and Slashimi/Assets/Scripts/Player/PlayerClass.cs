@@ -72,7 +72,7 @@ public class PlayerClass : EntityClass {
 		coll = GetComponent<Collider> ();
 		myFaction = setFaction; 
 
-		GameManager.SetPlayer (this.gameObject);
+		GameController.SetPlayer (this.gameObject);
 	}
 
 	// Update is called once per frame
@@ -149,21 +149,40 @@ public class PlayerClass : EntityClass {
 		uI_HP.text = Mathf.Round(health).ToString();
 	}
 
-	void FixedUpdate(){
-		//Horizontal Movement Settings
-		if (hAxis != 0 && onGround) {
-			//...when on ground
-			rB.AddForce (Vector2.right * hAxis * acceleration * Time.fixedDeltaTime * 100);
-		} else if (hAxis != 0 && !onGround) {
-			//...when in the air
-			rB.AddForce (Vector2.right * hAxis * acceleration * Time.fixedDeltaTime * 100 / airAccelDampener);
-		} else if (onGround){
-			///...when there is no horizontal input AND on the ground. (Allows flying through the air majestically and avoids ground sliding.)
-			rB.AddForce (Vector2.right * -rB.velocity.x * Time.fixedDeltaTime * 1000 / slidingFactor);
-		}
+	void FixedUpdate()
+	{
+		{ // Horizontal Movement Settings
+			Vector2 addHorizontalForce = Vector2.zero;
 
-		//Horizontal Speed Limit
-		rB.velocity = new Vector3 (Mathf.Clamp(rB.velocity.x, -maxHorzSpeed, maxHorzSpeed), rB.velocity.y, rB.velocity.z);
+			if (hAxis != 0 && onGround) 
+			{
+				//...when on ground
+				addHorizontalForce = Vector2.right * hAxis * acceleration * Time.fixedDeltaTime * 100;
+			} 
+			else if (hAxis != 0 && !onGround) 
+			{
+				//...when in the air
+				addHorizontalForce = Vector2.right * hAxis * acceleration * Time.fixedDeltaTime * 100 / airAccelDampener;
+			} 
+			else if (onGround) 
+			{
+				///...when there is no horizontal input AND on the ground. (Allows flying through the air majestically and avoids ground sliding.)
+				addHorizontalForce = Vector2.right * -rB.velocity.x * Time.fixedDeltaTime * 1000 / slidingFactor;
+			}
+
+			//Horizontal Speed Limit, designed to be less restrictive on air manuevers.
+			//This only limits horizontal base speed, speed gained from jumping off of angled surfaces is not included.
+			if (rB.velocity.x > maxHorzSpeed)
+			{
+				addHorizontalForce = Vector2.zero;
+			}
+			else if (rB.velocity.x < -maxHorzSpeed)
+			{
+				addHorizontalForce = Vector2.zero;
+			}
+
+			rB.AddForce (addHorizontalForce);
+		}
 
 		if (jumpCooldown > 0) jumpCooldown -= Time.fixedDeltaTime; //Decreasing the cooldown on the player's jump.
 

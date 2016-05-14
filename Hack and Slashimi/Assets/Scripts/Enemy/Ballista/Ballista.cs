@@ -18,7 +18,7 @@ public class Ballista : EnemyClass {
 	[SerializeField] float randomization = 1; //Causes the ballista shots to scatter a bit, or a lot.
 
 	[Range (0,1)]
-	[SerializeField] float arcBias = 0; //0 minimum arc, 1 maximum arc.
+	[SerializeField] float arcHeight = 0; //0 minimum arc, 1 maximum arc.
 
 	float fireCooldown = 0;
 	Transform targetTransform = null;
@@ -115,8 +115,8 @@ public class Ballista : EnemyClass {
 		float maxBallisticAngle = Mathf.Atan ((Mathf.Pow(projectileSpeed, 2) + Mathf.Sqrt(Mathf.Pow(projectileSpeed, 4) - (-Physics.gravity.magnitude) *
 			(Physics.gravity.magnitude * Mathf.Pow(distToTargetXZ, 2) + 2 * heightRelativeToBallista * Mathf.Pow(projectileSpeed, 2)))) / (Physics.gravity.magnitude * distToTargetXZ));
 
-		arcBias = Mathf.Clamp (arcBias, 0, 1);
-		float mixedBallisticAngle = minBallisticAngle * (1 - arcBias) - maxBallisticAngle * arcBias;
+		arcHeight = Mathf.Clamp (arcHeight, 0, 1);
+		float mixedBallisticAngle = minBallisticAngle * (1 - arcHeight) - maxBallisticAngle * arcHeight;
 
 		//Setting ballistic 
 		Vector3 ballisticDirection = Quaternion.Euler (mixedBallisticAngle * Mathf.Rad2Deg, 0, 0) * Vector3.forward * projectileSpeed;

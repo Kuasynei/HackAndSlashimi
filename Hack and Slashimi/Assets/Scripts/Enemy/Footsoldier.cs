@@ -41,8 +41,8 @@ public class Footsoldier : EntityClass {
 		health = maxH;
 
 		myFaction = setFaction;
-		player = GameManager.GetPlayer ();
-		playerColossus = GameManager.GetPColossus();
+		player = GameController.GetPlayer ();
+		playerColossus = GameController.GetPColossus();
 	}
 
     // Use this for initialization
@@ -97,7 +97,7 @@ public class Footsoldier : EntityClass {
 					weaponLock = 1.0f;
 
 					//Stop and look at the colossus
-					charController.SimpleMove (Vector3.zero);
+					charController.SimpleMove (new Vector3 (0, charController.velocity.y, 0)); //No longer Vector3.zero. Enemies spawning will freeze in mid-air if they spawn and can attack. - Tony
 				}
             }
 			else if (distToColossus > 6.65)
@@ -128,7 +128,7 @@ public class Footsoldier : EntityClass {
             }
             else if (distToPlayer < 1.5f)
             {
-                charController.SimpleMove(Vector3.zero);
+				charController.SimpleMove(new Vector3 (0, charController.velocity.y, 0)); //No longer Vector3.zero. Enemies spawning will freeze in mid-air if they spawn and can attack. - Tony
                 if(weaponLock <= 0)
                 {
 					DamageInfo orcDamagePackage = new DamageInfo(basicAttackDamage, this.gameObject, myFaction);
