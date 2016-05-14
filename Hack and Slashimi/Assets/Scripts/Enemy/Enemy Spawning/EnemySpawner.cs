@@ -22,8 +22,8 @@ public class EnemySpawner : MonoBehaviour {
 
         oP = GetComponent<EnemyPool>();
 
-		colossus = GameController.GetPColossus ();
-		player = GameController.GetPlayer ();
+		colossus = GameManager.GetPColossus ();
+		player = GameManager.GetPlayer ();
 	}
 	
 	// Update is called once per frame

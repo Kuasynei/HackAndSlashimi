@@ -1,11 +1,10 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Special\HealthPickup.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player\PlayerClass.cs">
     <Files>
-      <File FileName="Assets\Scripts\Player\Camera\CameraRail.cs" Line="26" Column="55" />
-      <File FileName="Assets\Scripts\Utility\SetPositionTo.cs" Line="11" Column="1" />
-      <File FileName="Assets\Scripts\Special\Colossus.cs" Line="35" Column="15" />
-      <File FileName="Assets\Scripts\Special\HealthPickup.cs" Line="17" Column="1" />
+      <File FileName="Assets\Scripts\Player\PlayerClass.cs" Line="181" Column="89" />
+      <File FileName="Assets\Scripts\Special\Colossus.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Enemy\Footsoldier.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

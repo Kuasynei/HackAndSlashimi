@@ -72,7 +72,7 @@ public class PlayerClass : EntityClass {
 		coll = GetComponent<Collider> ();
 		myFaction = setFaction; 
 
-		GameController.SetPlayer (this.gameObject);
+		GameManager.SetPlayer (this.gameObject);
 	}
 
 	// Update is called once per frame
@@ -174,11 +174,11 @@ public class PlayerClass : EntityClass {
 			//This only limits horizontal base speed, speed gained from jumping off of angled surfaces is not included.
 			if (rB.velocity.x > maxHorzSpeed)
 			{
-				addHorizontalForce = Vector2.zero;
+				addHorizontalForce = new Vector2(Mathf.Clamp(addHorizontalForce.x, -Mathf.Infinity, 0), addHorizontalForce.y);
 			}
 			else if (rB.velocity.x < -maxHorzSpeed)
 			{
-				addHorizontalForce = Vector2.zero;
+				addHorizontalForce = new Vector2(Mathf.Clamp(addHorizontalForce.x, 0, Mathf.Infinity), addHorizontalForce.y);
 			}
 
 			rB.AddForce (addHorizontalForce);

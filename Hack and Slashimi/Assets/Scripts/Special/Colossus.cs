@@ -26,13 +26,14 @@ public class Colossus : EntityClass
 		maxH = maxHealth;
 		rB = GetComponent<Rigidbody> ();
 
-		GameController.SetPColossus (this.gameObject);
+		GameManager.SetPColossus (this.gameObject);
 	}
 
 	void Update()
 	{
 		//UI STUFF
-		uI_HP.text = Mathf.Round(health).ToString();
+		if (uI_HP != null)
+			uI_HP.text = Mathf.Round(health).ToString();
 	}
 
 	void FixedUpdate()

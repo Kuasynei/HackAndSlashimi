@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public static class GameController {
+public static class GameManager {
 	static GameObject playerReference;
 	static GameObject pColossusReference;
 
