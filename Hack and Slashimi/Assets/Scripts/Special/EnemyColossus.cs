@@ -7,28 +7,15 @@ public class EnemyColossus : EntityClass
 	[SerializeField] float shockwaveTime = 5.0f;
 	[SerializeField] GameObject shockwaveObject;
 	GameObject player;
-	bool gotPlayer;
 
 	void Awake () 
 	{
 		maxH = maxHealth;
 	}
 
-//	void Start()
-//	{
-//		player = GameManager.GetPlayer();
-//	}
-	void Update()
+	void Start()
 	{
-		if(!gotPlayer)
-		{
-			player = GameManager.GetPlayer();
-			if(player != null)
-			{
-				gotPlayer = true;
-				//Debug.Log("Player Received!");
-			}
-		}
+		player = GameManager.GetPlayer();
 	}
 
 	void FixedUpdate()
