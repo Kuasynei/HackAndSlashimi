@@ -265,14 +265,14 @@ public class PlayerClass : EntityClass {
 		yield return new WaitForSeconds (1f);
 
 		//Returning to spawn point.
-		while (Vector3.Distance (transform.position, spawnPoint.position) > 2f) {
+		while (Vector3.Distance (transform.position, new Vector3(spawnPoint.position.x, spawnPoint.position.y, 0)) > 2f) {
 			transform.position = Vector3.Lerp (transform.position, spawnPoint.position, deathLerpSpeed);
 			yield return new WaitForFixedUpdate ();
 		}
 
 		//Recharging health.
 		for (; health < maxHealth;) {
-			transform.position = Vector3.Lerp (transform.position, spawnPoint.position, deathLerpSpeed);
+			transform.position = Vector3.Lerp (transform.position, new Vector3(spawnPoint.position.x, spawnPoint.position.y, 0), deathLerpSpeed);
 			health += (Time.fixedDeltaTime * 10000 / timeToRecharge) / maxHealth;
 
 			if (health > maxHealth) {
@@ -282,7 +282,7 @@ public class PlayerClass : EntityClass {
 		}
 
 
-		Vector3.Lerp (transform.position, spawnPoint.position, deathLerpSpeed);
+		Vector3.Lerp (transform.position, new Vector3(spawnPoint.position.x, spawnPoint.position.y, 0), deathLerpSpeed);
 		yield return new WaitForSeconds (0.5f);
 
 		//Reenabling some features.
