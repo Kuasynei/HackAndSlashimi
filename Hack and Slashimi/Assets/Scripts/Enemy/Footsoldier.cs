@@ -29,8 +29,6 @@ public class Footsoldier : EntityClass {
     private float weaponLock = 0;
 	private float commandTick; //Allows certain orders to run for cyclically.
 
-
-
 	void Awake()
 	{
 		//Store the character controller and the enemy sword/weapon
@@ -54,8 +52,8 @@ public class Footsoldier : EntityClass {
 	// Update is called once per frame
 	void Update ()
     {
-		//
-		if (commandTick <= 0) commandTick = 1f;
+        //
+        if (commandTick <= 0) commandTick = 1f;
 		commandTick -= Time.deltaTime; 
 
         //Check distance from the enemy to the player
@@ -66,12 +64,61 @@ public class Footsoldier : EntityClass {
 
         // ------------------------------------------------------------ AI BEHAVIOUR START ------------------------------------------------------------ //
 
+        //Move them back to the middle lane if they are in front of the player on the Z-axis
+        //@note: They seem to freak out if they are there.
+        if (transform.position.z < 0)
+        {
+            charController.SimpleMove(transform.forward);
+        }
+        else
+        {
+            charController.SimpleMove(Vector3.zero);
+        }
+
+        //Move to the layer below if you cant move forward
+        if(transform.position.z > 0.5f)
+        {
+            RaycastHit hit;
+            Vector3 angleToMoveDir = (transform.right + transform.forward) / 2;
+
+            if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
+            {
+                charController.SimpleMove(angleToMoveDir);
+
+                Debug.Log("Moving back to the right");
+            }
+        }
+        else
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, Vector3.right, out hit, 5.0f))
+            {
+                if (hit.collider.tag == "Enemy")
+                {
+                    //&& hit.collider.gameObject.GetComponent<Rigidbody>().velocity.x <= 0.5f
+
+                    Vector3 angleToMoveDir = (-transform.right + transform.forward) / 2;
+
+                    Debug.Log("Detected Enemy Infront");
+
+                    if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
+                    {
+                        charController.SimpleMove(angleToMoveDir);
+
+                        Debug.Log("Moving To The Left");
+                    }
+                }
+            }
+        }
+
         //This entire area is basically a behavior tree. This prioritizes running towards the colossus then towards the player else it will just
         //run to the left
         //@note: the basic else functionality will have to change because enemies will not only spawn on the right of the map
-        if(distToColossus < 15)
+        if (distToColossus < 15)
         {
-            if(distToColossus > 7)
+            charController.SimpleMove(Vector3.zero);
+
+            if (distToColossus > 7)
             {
                 //Move toward the colossus
                 Vector3 headingDir = playerColossus.transform.position - transform.position;
