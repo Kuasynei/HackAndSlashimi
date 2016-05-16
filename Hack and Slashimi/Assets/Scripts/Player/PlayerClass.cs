@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 
-public class PlayerClass : EntityClass {
+public class PlayerClass : EntityClass 
+{
 
 	[Header("Main")]
 	[SerializeField] bool debugMode = true;
-	[SerializeField] bool disableInput = false;
+	[SerializeField] bool disableGameInput = false;
 	[SerializeField] Transform spawnPoint;
 	[SerializeField] Text uI_HP;
 
@@ -27,10 +28,10 @@ public class PlayerClass : EntityClass {
 	[SerializeField] float maxJumps = 2; //Maximum number of jumps, two for double jump, 0 and you can't jump at all.
 	[SerializeField] float enhancedGravityFactorTM = 2;
 	[SerializeField] float bouncyHouseFactor = 2; //Increases jump power against weird angles that aren't straight up, to make them feel better to jump against.
+	[SerializeField] float jumpMercy; //To account for bumps in the ground, if you lose contact with the ground you will still count as onGround for a short time (unless you jumped).
 
 	[Header("Combat")]
 	[SerializeField] float maxHealth = 100;
-	[SerializeField] float basicAttackDamage = 10;
 	[SerializeField] faction setFaction;
 	[SerializeField] MeleeWeaponClass myBlade;
 
@@ -38,18 +39,25 @@ public class PlayerClass : EntityClass {
 	//Player Inputs
 	float hAxis;
 	float vAxis;
-	float fire1Axis;
+	//float fire1Axis;
+	bool fire1Down;
+
+	//Horizontal Movement
+	bool hMoveEnabled = true;
 
 	//Jumping
 	float jumpGuideline = 0.2f; //This is so that you don't waste your double jumps. 
 	float jumpCooldown = 0; //You can only jump once per half second.
 	float jumpsAvailable;
 	float eGFactor; //ENHANCED GRAVITY FACTOR TM
+	float jumpMercyTimer = 0;
 	bool onGround;
+	bool jumpEnabled = true;
+	List<ContactPoint> groundContacts = new List<ContactPoint> ();
 
 	//Combat
+	float weaponLock = 0; //Prevents the player from launching multiple attack commands (or other commands) before the attack finishes.
 	bool respawning = false;
-	float weaponLock = 0; //Prevents the player from launching multiple attack commands before the previous finishes.
 
 	//Rotation
 	int facing = 1; //-1 Facing Left / 1 Facing Right
@@ -58,14 +66,13 @@ public class PlayerClass : EntityClass {
 	//Other
 	Collider coll;
 	Rigidbody rB;
-	List<ContactPoint> groundContacts = new List<ContactPoint> ();
 
-    //Storing the Colossus for use later
-    [SerializeField] GameObject Colossus;
-
-	// Use this for initialization
-	void Awake () {
+	protected override void Awake () 
+	{
 		maxH = maxHealth;
+
+		base.Awake ();
+
 		rB = GetComponent<Rigidbody> ();
 		jumpsAvailable = maxJumps;
 		eGFactor = enhancedGravityFactorTM;
@@ -75,11 +82,12 @@ public class PlayerClass : EntityClass {
 		GameManager.SetPlayer (this.gameObject);
 	}
 
-	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
         //The death check is updated with checking if the colossus is alive or not. If it is dead then the game is over.
-		if (health <= 0 && !respawning) {
-            if(Colossus.GetComponent<Colossus>().getIsDead())
+		if (health <= 0 && !respawning) 
+		{
+			if(GameManager.GetPColossus().GetComponent<Colossus>().getIsDead())
             {
                 //Game Over
             }
@@ -89,29 +97,30 @@ public class PlayerClass : EntityClass {
                 respawning = true;
                 StartCoroutine("Die");
             }
-			
 		}
 
-		//Player Input
-		if (!disableInput) {
+		////Player Input
+		if (!disableGameInput) {
 			hAxis = Input.GetAxis ("Horizontal");
 			vAxis = Input.GetAxis ("Vertical");
-			fire1Axis = Input.GetAxis ("Fire1");
+			//fire1Axis = Input.GetAxis ("Fire1");
+			fire1Down = Input.GetMouseButtonDown (0);
 		} else {
 			hAxis = 0;
 			vAxis = 0;
-			fire1Axis = 0;
+			//fire1Axis = 0;
+			fire1Down = false;
 		}
 
 		if (debugMode) {
 			//Any collisions the player makes below this line will count as "contact with ground".
-			if (onGround) {
+			if (onGround || jumpMercyTimer > 0) {
 				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, Vector3.right * 0.5f, Color.green);
 				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, -Vector3.right * 0.5f, Color.green);
-			} else if (!onGround) {
+			} /*else if (!onGround) {
 				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, Vector3.right * 0.5f, Color.yellow);
 				Debug.DrawRay (transform.position + Vector3.up * jumpDetectionLine, -Vector3.right * 0.5f, Color.yellow);
-			}
+			}*/
 
 			//Drawing collision angles.
 			for (int i = 0; i < groundContacts.Count; i++) {
@@ -135,38 +144,57 @@ public class PlayerClass : EntityClass {
 			}
 		}
 			
-		//Attack Commands
+		////Attack Commands
 		weaponLock -= Time.deltaTime;
-		if (fire1Axis != 0 && weaponLock <= 0) {
-			if (myBlade.GetType () == typeof(Sword)){
-				DamageInfo basicAttackPackage = new DamageInfo (basicAttackDamage, this.gameObject, faction.goodGuys);
-				(myBlade as Sword).BasicAttack (0.4f, 2, basicAttackPackage);
-				weaponLock = 0.5f;
+
+		//Fire1Down
+		if (fire1Down && weaponLock <= 0) //You cannot use another attack while in weapon lock.
+		{ 
+			if (myBlade.GetType () == typeof(Sword)) // Weapon Type: Sword
+			{ 
+				if (onGround || jumpMercyTimer > 0) //Basic Attack
+				{
+					float basicAttackDamage = 5;
+					int ticksOfDamage = 2;
+					float dashSpeed = 15;
+
+					//Brake for a short time.
+					StartCoroutine (ManualBrake(0, 0.1f, 600));
+
+					//Dash in the direction you are facing over the span of 0.4 seconds. Gravity applies.
+					StartCoroutine (Dash (0.1f, 0.1f, Vector3.right * facing * dashSpeed, false)); 
+
+					StartCoroutine (ManualBrake(0.2f, 0.1f, 600));
+
+					DamageInfo basicAttackPackage = new DamageInfo (basicAttackDamage, this.gameObject, faction.goodGuys);
+					(myBlade as Sword).BasicAttack (0.1f, 0.1f, ticksOfDamage, basicAttackPackage);
+
+					weaponLock = 0.2f;
+				}
 			}
 		}
 
-		//UI
+		////UI
 		uI_HP.text = Mathf.Round(health).ToString();
 	}
 
 	void FixedUpdate()
 	{
-		{ // Horizontal Movement Settings
+		//// Horizontal Movement Settings
+		if (hMoveEnabled)
+		{ 
 			Vector2 addHorizontalForce = Vector2.zero;
 
-			if (hAxis != 0 && onGround) 
+			if (hAxis != 0 && onGround) //...when on the ground
 			{
-				//...when on ground
 				addHorizontalForce = Vector2.right * hAxis * acceleration * Time.fixedDeltaTime * 100;
 			} 
-			else if (hAxis != 0 && !onGround) 
+			else if (hAxis != 0 && !onGround) //...when in the air
 			{
-				//...when in the air
 				addHorizontalForce = Vector2.right * hAxis * acceleration * Time.fixedDeltaTime * 100 / airAccelDampener;
 			} 
-			else if (onGround) 
+			else if (onGround) ///...when there is no horizontal input AND on the ground. (Allows flying through the air majestically and avoids ground sliding.)
 			{
-				///...when there is no horizontal input AND on the ground. (Allows flying through the air majestically and avoids ground sliding.)
 				addHorizontalForce = Vector2.right * -rB.velocity.x * Time.fixedDeltaTime * 1000 / slidingFactor;
 			}
 
@@ -184,39 +212,60 @@ public class PlayerClass : EntityClass {
 			rB.AddForce (addHorizontalForce);
 		}
 
+		////Jumping
 		if (jumpCooldown > 0) jumpCooldown -= Time.fixedDeltaTime; //Decreasing the cooldown on the player's jump.
+		if (jumpMercyTimer > 0) jumpMercyTimer -= Time.fixedDeltaTime; 
 
 		//Aerial jumps (every jump after the first one)
-		if (!onGround && jumpCooldown <= 0 && jumpsAvailable > 0 && vAxis > 0) {
-			rB.velocity = new Vector3 (rB.velocity.x, 0, rB.velocity.z); //Resetting the velocity so that the jump feels impactful no matter what.
-			rB.AddForce (Vector3.up * jumpPower * 100);
-			jumpCooldown = jumpGuideline;
-			jumpsAvailable -= 1;
+		if (jumpEnabled && !fire1Down) //Attacking overrides jump commands.
+		{
+			if (!onGround && jumpCooldown <= 0 && jumpsAvailable > 0 && vAxis > 0)
+			{
+				rB.velocity = new Vector3 (rB.velocity.x, 0, rB.velocity.z); //Resetting the velocity so that the jump feels impactful no matter what.
+				rB.AddForce (Vector3.up * jumpPower * 100);
+				jumpCooldown = jumpGuideline;
+				jumpsAvailable -= 1;
+				jumpMercyTimer = 0;
+			}
 		}
 
-		//Setting player facing direction.
-		if (hAxis > 0) {
-			facing = 1;
-		} else if (hAxis < 0){
-			facing = -1;
+		////Setting player facing direction.
+		if (weaponLock <= 0)
+		{
+			if (hAxis > 0)
+			{
+				facing = 1;
+			}
+			else if (hAxis < 0)
+			{
+				facing = -1;
+			}
 		}
 
 		//Orb lerps around the player to determine where they should be looking. THEN HAVE THE PLAYER LOOK AT IT.
-		if (facing == 1) {
+		if (facing == 1)
+		{
 			lookOrb = Vector3.Lerp (new Vector3 (lookOrb.x, 0, 0), new Vector3 (1, 0, 0), rotationSpeed * Time.fixedDeltaTime);
-			lookOrb += new Vector3 (0, 0, 1f - Mathf.Abs(lookOrb.x));
-		} else if (facing == -1) {
-			lookOrb = Vector3.Lerp (new Vector3 (lookOrb.x, 0, 0), new Vector3(-1, 0, 0), rotationSpeed * Time.fixedDeltaTime);
-			lookOrb += new Vector3 (0, 0, -1f + Mathf.Abs(lookOrb.x));
+			lookOrb += new Vector3 (0, 0, 1f - Mathf.Abs (lookOrb.x));
+		}
+		else if (facing == -1)
+		{
+			lookOrb = Vector3.Lerp (new Vector3 (lookOrb.x, 0, 0), new Vector3 (-1, 0, 0), rotationSpeed * Time.fixedDeltaTime);
+			lookOrb += new Vector3 (0, 0, -1f + Mathf.Abs (lookOrb.x));
 		}
 		//LOOK AT THE LOOK ORB DAMN IT.
 		transform.LookAt (lookOrb + transform.position);
+		
 
-		//groundContacts determine status of ground contact.
-		if (groundContacts.Count > 0) {
+		////groundContacts determine status of ground contact.
+		if (groundContacts.Count > 0) 
+		{
 			onGround = true;
+			jumpMercyTimer = jumpMercy;
 			jumpsAvailable = maxJumps - 1;
-		} else {
+		} 
+		else 
+		{
 			onGround = false;
 		}
 
@@ -225,37 +274,86 @@ public class PlayerClass : EntityClass {
 	}
 
 	void OnCollisionStay(Collision collInfo) {
-
-		//Label all collisions made under the "jumpDetectionLine" as ground contacts.
+		////Label all collisions made under the "jumpDetectionLine" as ground contacts.
 		for (int i = 0; i < collInfo.contacts.Length; i++) {
 			if (collInfo.contacts [i].point.y < transform.position.y + jumpDetectionLine) {
 				groundContacts.Add (collInfo.contacts [i]);
 			}
 		}
 
-		//Ground contact enables jumping. First jump code is done here.
-		if (onGround && vAxis > 0 && jumpCooldown <= 0) {
-			Vector3 jumpVector = Vector3.zero;
+		////Ground contact enables jumping. First jump code is done here.
+		if (jumpEnabled && !fire1Down) //Attacking overrides jump commands.
+		{
+			if ((onGround || jumpMercyTimer > 0) && vAxis > 0 && jumpCooldown <= 0)
+			{
+				Vector3 jumpVector = Vector3.zero;
 
-			for (int i = 0; i < groundContacts.Count; i++) {
-				ContactPoint contactPoint = groundContacts [i];
-				jumpVector = (jumpVector + contactPoint.normal).normalized;
+				for (int i = 0; i < groundContacts.Count; i++)
+				{
+					ContactPoint contactPoint = groundContacts [i];
+					jumpVector = (jumpVector + contactPoint.normal).normalized;
+				}
+
+				//Bouncy House Factor. The steeper an angle is, the stronger the jump will be to compensate.
+				float bHF = Mathf.Abs (jumpVector.x) * bouncyHouseFactor + 1;
+
+				rB.AddForce (jumpVector * bHF * jumpPower * 100);
+				jumpCooldown = jumpGuideline;
+				jumpsAvailable -= 1;
+				jumpMercyTimer = 0;
+			}
+		}
+	}
+
+	//Other movement options are disabled when dashing. Does not account for dampening and friction.
+	IEnumerator Dash(float delay, float duration, Vector3 dashVector, bool defyGravity)
+	{
+		yield return new WaitForSeconds (delay);
+
+		hMoveEnabled = false;
+		jumpEnabled = false;
+		if (defyGravity) rB.useGravity = false;
+
+		rB.velocity += dashVector;
+
+		yield return new WaitForSeconds (duration);
+
+		hMoveEnabled = true;
+		jumpEnabled = true;
+		if (defyGravity) rB.useGravity = true;
+	}
+
+	//Brake strength is capped at 1000, anymore and you'd be going backwards. You must be on the ground to brake.
+	IEnumerator ManualBrake(float delay, float duration, float strength)
+	{
+		if (onGround || jumpMercyTimer > 0)
+		{
+			yield return new WaitForSeconds (delay);
+
+			hMoveEnabled = false;
+			jumpEnabled = false;
+
+			strength = Mathf.Clamp (strength, 0, 1000);
+
+			for (float t = 0; t < duration;)
+			{
+				t += Time.fixedDeltaTime;	
+				rB.AddForce (Vector2.right * -rB.velocity.x * Time.fixedDeltaTime * strength);
+				yield return new WaitForFixedUpdate ();
 			}
 
-			//Bouncy House Factor. The steeper an angle is, the stronger the jump will be to compensate.
-			float bHF = Mathf.Abs(jumpVector.x) * bouncyHouseFactor + 1;
-
-			rB.AddForce (jumpVector * bHF * jumpPower * 100);
-			jumpCooldown = jumpGuideline;
-			jumpsAvailable -= 1;
+			hMoveEnabled = true;
+			jumpEnabled = true;
 		}
+
+		//yield return null;
 	}
 
 	IEnumerator Die() {
 		//Disabling and restarting some variables.
 		float timeToRecharge = 5;
 		float deathLerpSpeed = 0.05f;
-		disableInput = true;
+		disableGameInput = true;
 		rB.useGravity = false;
 		rB.velocity = new Vector3 (0, 0, 0);
 		jumpsAvailable = maxJumps - 1;
@@ -286,7 +384,7 @@ public class PlayerClass : EntityClass {
 		yield return new WaitForSeconds (0.5f);
 
 		//Reenabling some features.
-		disableInput = false;
+		disableGameInput = false;
 		rB.useGravity = true;
 		eGFactor = enhancedGravityFactorTM;
 		coll.enabled = true;

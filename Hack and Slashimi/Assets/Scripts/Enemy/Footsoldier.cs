@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Footsoldier : EntityClass {
+public class Footsoldier : EnemyClass {
 
 	[Header("Main")]
+	public bool debugMode = true;
 	[SerializeField] GameObject healthOrb;
     [SerializeField] MeleeWeaponClass enemyWeapon;
 
@@ -29,14 +30,15 @@ public class Footsoldier : EntityClass {
     private float weaponLock = 0;
 	private float commandTick; //Allows certain orders to run for cyclically.
 
-	void Awake()
+	protected override void Awake()
 	{
+		maxH = maxHealth;
+
+		base.Awake ();
+
 		//Store the character controller and the enemy sword/weapon
 		charController = GetComponent<CharacterController>();
 		enemySword = enemyWeapon as Sword;
-
-		maxH = maxHealth;
-		health = maxH;
 
 		myFaction = setFaction;
 		player = GameManager.GetPlayer ();
@@ -44,15 +46,15 @@ public class Footsoldier : EntityClass {
 	}
 
     // Use this for initialization
-	void Start () 
+	protected override void Start () 
     {
+		base.Start ();
 		commandTick = Random.value; //Staggers commandTicks for all AI so they don't look like robits.
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-        //
         if (commandTick <= 0) commandTick = 1f;
 		commandTick -= Time.deltaTime; 
 
@@ -85,7 +87,7 @@ public class Footsoldier : EntityClass {
             {
                 charController.SimpleMove(angleToMoveDir);
 
-                Debug.Log("Moving back to the right");
+				if (debugMode) Debug.Log("Moving back to the right");
             }
         }
         else
@@ -99,13 +101,13 @@ public class Footsoldier : EntityClass {
 
                     Vector3 angleToMoveDir = (-transform.right + transform.forward) / 2;
 
-                    Debug.Log("Detected Enemy Infront");
+					if (debugMode) Debug.Log("Detected Enemy Infront");
 
                     if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
                     {
                         charController.SimpleMove(angleToMoveDir);
 
-                        Debug.Log("Moving To The Left");
+						if (debugMode) Debug.Log("Moving To The Left");
                     }
                 }
             }

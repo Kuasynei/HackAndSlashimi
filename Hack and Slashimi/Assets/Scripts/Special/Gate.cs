@@ -5,9 +5,12 @@ public class Gate : EntityClass
 {
 	[SerializeField] float maxHealth = 100000;
 
-	void Awake () 
+	protected override void Awake () 
 	{
+
 		maxH = maxHealth;
+
+		base.Awake ();
 	}
 
 	void Update()

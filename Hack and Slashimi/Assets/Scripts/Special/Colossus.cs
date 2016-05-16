@@ -21,9 +21,11 @@ public class Colossus : EntityClass
     //Colossus death variables
     private bool isDead = false;
 
-	void Awake () 
+	protected override void Awake () 
 	{
 		maxH = maxHealth;
+		base.Awake ();
+
 		rB = GetComponent<Rigidbody> ();
 
 		GameManager.SetPColossus (this.gameObject);

@@ -9,6 +9,9 @@ public class Ballista : EnemyClass {
 	[SerializeField] GameObject bolt;
 	[SerializeField] Transform boltSpawnPoint;
 
+	[Header("Combat")]
+	[SerializeField] float maxHealth = 50;
+
 	[Header("Firing")]
 	[SerializeField] float damagePerShot = 200;
 	[SerializeField] float secondsToReload = 7;
@@ -23,9 +26,12 @@ public class Ballista : EnemyClass {
 	float fireCooldown = 0;
 	Transform targetTransform = null;
 
-	void Awake()
+	protected override void Awake()
 	{
 		myFaction = setFaction;
+		maxH = maxHealth;
+
+		base.Awake ();
 	}
 
 	void Update()

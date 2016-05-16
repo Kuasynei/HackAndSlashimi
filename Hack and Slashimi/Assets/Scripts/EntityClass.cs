@@ -25,26 +25,27 @@ public class EntityClass : MonoBehaviour
 	protected float health = 1;
 	protected faction myFaction = faction.neutral;
 
-	void Start()
+	protected virtual void Awake()
 	{
 		health = maxH;
 	}
 
-	public float TakeDamage(DamageInfo damagePackage) 
+	protected virtual void Start()
+	{
+		
+	}
+
+	public virtual float TakeDamage(DamageInfo damagePackage) 
 	{
 		if(damagePackage.attackerFaction != myFaction || damagePackage.attackerFaction == faction.neutral)
         {
 			health -= damagePackage.damage;
         }
-        else
-        {
-            Debug.Log("DAMAGE NOT VALID");
-        }
 
         return health;
     }
 
-	public float Heal(float heal) 
+	public virtual float Heal(float heal) 
 	{
 		if(health != maxH)
 		{
@@ -53,5 +54,10 @@ public class EntityClass : MonoBehaviour
             Debug.Log("Heal Run");
 		}
 		return health;
+	}
+
+	public faction GetFaction()
+	{
+		return myFaction;
 	}
 }

@@ -38,10 +38,21 @@ public class CameraRail : MonoBehaviour {
 
 		if (closestNodeIndex == 0)
 		{
+			if (debugMode)
+			{
+				Debug.DrawLine (pos, ProjectOnSegment (nodes[0], nodes[1], pos), Color.blue);
+				Debug.DrawLine (pos, nodes[closestNodeIndex], Color.cyan);
+			}
+
 			return ProjectOnSegment (nodes[0], nodes[1], pos);
 		}
 		else if (closestNodeIndex == nodeCount - 1)
 		{
+			if (debugMode)
+			{
+				Debug.DrawLine (pos, ProjectOnSegment (nodes[nodeCount - 1], nodes[nodeCount - 2], pos), Color.blue);
+				Debug.DrawLine (pos, nodes[closestNodeIndex], Color.cyan);
+			}
 			return ProjectOnSegment (nodes[nodeCount - 1], nodes[nodeCount - 2], pos);
 		}
 		else

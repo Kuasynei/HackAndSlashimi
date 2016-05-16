@@ -8,13 +8,17 @@ public class EnemyColossus : EntityClass
 	[SerializeField] GameObject shockwaveObject;
 	GameObject player;
 
-	void Awake () 
+	protected override void Awake () 
 	{
+
 		maxH = maxHealth;
+
+		base.Awake ();
 	}
 
-	void Start()
+	protected override void Start()
 	{
+		base.Start ();
 		player = GameManager.GetPlayer();
 	}
 

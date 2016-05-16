@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof (Collider))]
 public class MeleeWeaponClass : MonoBehaviour {
 
 	public bool debugMode = true;
@@ -9,15 +10,29 @@ public class MeleeWeaponClass : MonoBehaviour {
 	protected bool contactDeadly = false; //If this is true, the weapon will deal damage on contact.
 	protected float contactDeadlinessTimer = 0; //If this is greater than zero the weapon will deal damage on contact.
 	protected DamageInfo myDamagePackage;
+	protected Collider myColl;
 
-	// Update is called once per frame
-	void FixedUpdate () 
+	protected virtual void Awake()
 	{
-		//Makes this weapon
+		myColl = GetComponent<Collider> ();
+	}
+
+	protected virtual void FixedUpdate () 
+	{
+		//Makes this weapon deadly for a fixed amount of time.
 		if (contactDeadlinessTimer > 0) 
 		{
 			contactDeadlinessTimer -= Time.fixedDeltaTime;
 		} 
+
+		if ((contactDeadly || contactDeadlinessTimer > 0) && !myColl.enabled)
+		{
+			myColl.enabled = true;
+		}
+		else if (!(contactDeadly || contactDeadlinessTimer > 0) && myColl.enabled)
+		{
+			myColl.enabled = false;
+		}
 	}
 		
 	//Set the weapon's ability to deal damage. Returns the end state.
@@ -48,7 +63,7 @@ public class MeleeWeaponClass : MonoBehaviour {
 		return contactDeadlinessTimer;
 	}
 
-	//This fires ticks of deadliness or "ticks of damage" over a period of time.
+	//This fires ticks of deadliness or "ticks of damage" over a period of time. Splits the damage requested over the number of ticks requested.
 	public void TickContactDeadliness(float totalTime, int numberOfTicks, DamageInfo damagePackage)
 	{
 		myDamagePackage = damagePackage;
@@ -77,13 +92,11 @@ public class MeleeWeaponClass : MonoBehaviour {
 			if (otherColl.GetComponent (typeof(EntityClass))) {
 				EntityClass otherEntity = otherColl.GetComponent (typeof(EntityClass)) as EntityClass;
 
+				float entityHealthRemaining = otherEntity.TakeDamage (myDamagePackage);
+
 				if (debugMode)
 				{
-					Debug.Log(otherColl.name + " has taken " + contactDamage + " damage! Health is now: " + otherEntity.TakeDamage (myDamagePackage));
-				}
-				else
-				{
-					otherEntity.TakeDamage (myDamagePackage);
+					Debug.Log(otherColl.name + " has taken " + contactDamage + " damage! Health is now: " + entityHealthRemaining);
 				}
 
 			}

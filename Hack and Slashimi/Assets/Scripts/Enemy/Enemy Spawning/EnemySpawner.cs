@@ -4,6 +4,7 @@ using System.Collections;
 public class EnemySpawner : MonoBehaviour {
 
     //[SerializeField] GameObject enemyToSpawn;
+	[SerializeField] bool debugMode;
     [SerializeField] int nEnemiesToSpawn;
     [SerializeField] int MAXSpawnedEnemies;
 
@@ -43,9 +44,12 @@ public class EnemySpawner : MonoBehaviour {
                     temp.SetActive(true);
                     temp.transform.position = new Vector3(transform.position.x * i / 4, transform.position.y , 0);
                     temp.transform.rotation = transform.rotation;
-                    temp.GetComponent<Footsoldier>().setPlayer(player);
-                    temp.GetComponent<Footsoldier>().setPlayerColossus(colossus);
-                    temp.GetComponent<Footsoldier>().setResetHealth(); 
+
+					Footsoldier tempFootsoldier = temp.GetComponent<Footsoldier> ();
+					tempFootsoldier.setPlayer(player);
+					tempFootsoldier.setPlayerColossus(colossus);
+					tempFootsoldier.setResetHealth(); 
+					tempFootsoldier.debugMode = debugMode;
 
                     enemiesSpawned++;
 
