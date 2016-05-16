@@ -11,6 +11,7 @@ public class Footsoldier : EnemyClass {
 	[Header("Movement")]
 	[SerializeField] float runSpeed = 4;
 	[SerializeField] float marchSpeed = 2;
+	[SerializeField] float acceleration = 10;
 	[SerializeField] float turnSpeed = 1;
 
 	[Header("Combat Stats")]
@@ -19,16 +20,19 @@ public class Footsoldier : EnemyClass {
 	[SerializeField] int rngDropPercent = 30;
 	[SerializeField] faction setFaction = faction.badGuys;
 
-    private CharacterController charController;
     //THIS WILL BE CHANGED TO AXE
     private Sword enemySword;
 	private GameObject player;
 	private GameObject playerColossus;
+	private Rigidbody rB;
 
     private float distToPlayer;
     private float distToColossus;
     private float weaponLock = 0;
 	private float commandTick; //Allows certain orders to run for cyclically.
+
+	enum MovementMode {Run, March};
+	MovementMode myMovementMode;
 
 	protected override void Awake()
 	{
@@ -37,12 +41,12 @@ public class Footsoldier : EnemyClass {
 		base.Awake ();
 
 		//Store the character controller and the enemy sword/weapon
-		charController = GetComponent<CharacterController>();
 		enemySword = enemyWeapon as Sword;
 
 		myFaction = setFaction;
 		player = GameManager.GetPlayer ();
 		playerColossus = GameManager.GetPColossus();
+		rB = GetComponent <Rigidbody> ();
 	}
 
     // Use this for initialization
@@ -65,7 +69,7 @@ public class Footsoldier : EnemyClass {
         distToColossus = Vector3.Distance(playerColossus.transform.position, transform.position);
 
         // ------------------------------------------------------------ AI BEHAVIOUR START ------------------------------------------------------------ //
-
+		/*
         //Move them back to the middle lane if they are in front of the player on the Z-axis
         //@note: They seem to freak out if they are there.
         if (transform.position.z < 0)
@@ -111,14 +115,14 @@ public class Footsoldier : EnemyClass {
                     }
                 }
             }
-        }
+        }*/
 
         //This entire area is basically a behavior tree. This prioritizes running towards the colossus then towards the player else it will just
         //run to the left
         //@note: the basic else functionality will have to change because enemies will not only spawn on the right of the map
         if (distToColossus < 15)
         {
-            charController.SimpleMove(Vector3.zero);
+			XBrake ();
 
             if (distToColossus > 7)
             {
@@ -130,7 +134,8 @@ public class Footsoldier : EnemyClass {
 					transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
                 }
 
-				charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
+				//charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
+				XMove(new Vector3 (leftOrRightValue, 0, 0), MovementMode.Run);
             }
 			else if ( distToColossus < 7 && commandTick <= 0.5f)
             {    
@@ -146,7 +151,8 @@ public class Footsoldier : EnemyClass {
 					weaponLock = 1.0f;
 
 					//Stop and look at the colossus
-					charController.SimpleMove (Vector3.zero);
+					//charController.SimpleMove (Vector3.zero);
+					XBrake ();
 				}
             }
 			else if (distToColossus > 6.65)
@@ -159,7 +165,8 @@ public class Footsoldier : EnemyClass {
 					transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
 				}
 
-				charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
+				//charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
+				XMove(new Vector3 (leftOrRightValue, 0, 0), MovementMode.Run);
 			}
         }
         else if(distToPlayer < 10)
@@ -173,11 +180,13 @@ public class Footsoldier : EnemyClass {
 					transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
                 }
 
-				charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
+				//charController.SimpleMove(new Vector3(leftOrRightValue * runSpeed, 0, 0));
+				XMove(new Vector3 (leftOrRightValue, 0, 0), MovementMode.Run);
             }
             else if (distToPlayer < 1.5f)
             {
-				charController.SimpleMove(Vector3.zero); 
+				//charController.SimpleMove(Vector3.zero); 
+				XBrake ();
                 if(weaponLock <= 0)
                 {
 					DamageInfo orcDamagePackage = new DamageInfo(basicAttackDamage, this.gameObject, myFaction);
@@ -205,7 +214,7 @@ public class Footsoldier : EnemyClass {
             {
 				transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(leftOrRightValue * Vector3.right), Time.deltaTime * turnSpeed);
             }
-			charController.SimpleMove(new Vector3(leftOrRightValue * marchSpeed, 0, 0));
+			XMove(new Vector3 (leftOrRightValue, 0, 0), MovementMode.March);
 
         }
 
@@ -263,4 +272,35 @@ public class Footsoldier : EnemyClass {
     {
         health = 20;
     }
+
+	void XMove (Vector3 moveDir, MovementMode moveMode)
+	{
+		if (moveMode == MovementMode.Run)
+		{
+			if (moveDir.x < 0 && rB.velocity.x > -runSpeed)
+			{
+				rB.AddForce (new Vector3 (moveDir.x, 0, 0) * Time.deltaTime * 100 * acceleration);
+			}
+			else if (moveDir.x > 0 && rB.velocity.x < runSpeed)
+			{
+				rB.AddForce (new Vector3 (moveDir.x, 0, 0) * Time.deltaTime * 100 * acceleration);
+			}
+		}
+		else if (moveMode == MovementMode.March)
+		{
+			if (moveDir.x < 0 && rB.velocity.x > -marchSpeed)
+			{
+				rB.AddForce (new Vector3 (moveDir.x, 0, 0) * Time.deltaTime * 100 * acceleration);
+			}
+			else if (moveDir.x > 0 && rB.velocity.x < marchSpeed)
+			{
+				rB.AddForce (new Vector3 (moveDir.x, 0, 0) * Time.deltaTime * 100 * acceleration);
+			}
+		}
+	}
+
+	void XBrake ()
+	{
+		rB.AddForce (new Vector3(-rB.velocity.x, 0, 0) * Time.deltaTime * 100 * runSpeed);
+	}
 }
