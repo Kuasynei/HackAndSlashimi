@@ -69,29 +69,22 @@ public class Footsoldier : EnemyClass {
         distToColossus = Vector3.Distance(playerColossus.transform.position, transform.position);
 
         // ------------------------------------------------------------ AI BEHAVIOUR START ------------------------------------------------------------ //
-		/*
+		
+
         //Move them back to the middle lane if they are in front of the player on the Z-axis
         //@note: They seem to freak out if they are there.
-        if (transform.position.z < 0)
-        {
-            charController.SimpleMove(transform.forward);
-        }
-        else
-        {
-            charController.SimpleMove(Vector3.zero);
-        }
 
         //Move to the layer below if you cant move forward
-        if(transform.position.z > 0.5f)
+        if(transform.position.z > 0.5f || transform.position.z < -0.5f)
         {
             RaycastHit hit;
             Vector3 angleToMoveDir = (transform.right + transform.forward) / 2;
 
             if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
             {
-                charController.SimpleMove(angleToMoveDir);
+                ZMove(angleToMoveDir, MovementMode.March);
 
-				if (debugMode) Debug.Log("Moving back to the right");
+                if (debugMode) Debug.Log("Moving back to the right");
             }
         }
         else
@@ -109,13 +102,13 @@ public class Footsoldier : EnemyClass {
 
                     if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
                     {
-                        charController.SimpleMove(angleToMoveDir);
+                        ZMove(angleToMoveDir, MovementMode.March);
 
 						if (debugMode) Debug.Log("Moving To The Left");
                     }
                 }
             }
-        }*/
+        }
 
         //This entire area is basically a behavior tree. This prioritizes running towards the colossus then towards the player else it will just
         //run to the left
@@ -303,4 +296,37 @@ public class Footsoldier : EnemyClass {
 	{
 		rB.AddForce (new Vector3(-rB.velocity.x, 0, 0) * Time.deltaTime * 100 * runSpeed);
 	}
+
+    //Exact copy of the XMove function, just going to be used for the Z move so that
+    //The AI can change its layer to move around other enemies. 
+    void ZMove(Vector3 moveDir, MovementMode moveMode)
+    {
+        if (moveMode == MovementMode.Run)
+        {
+            if (moveDir.z < 0 && rB.velocity.z > -runSpeed)
+            {
+                rB.AddForce(new Vector3(moveDir.z, 0, 0) * Time.deltaTime * 100 * acceleration);
+            }
+            else if (moveDir.z > 0 && rB.velocity.z < runSpeed)
+            {
+                rB.AddForce(new Vector3(moveDir.z, 0, 0) * Time.deltaTime * 100 * acceleration);
+            }
+        }
+        else if (moveMode == MovementMode.March)
+        {
+            if (moveDir.z < 0 && rB.velocity.z > -marchSpeed)
+            {
+                rB.AddForce(new Vector3(moveDir.z, 0, 0) * Time.deltaTime * 100 * acceleration);
+            }
+            else if (moveDir.z > 0 && rB.velocity.z < marchSpeed)
+            {
+                rB.AddForce(new Vector3(moveDir.z, 0, 0) * Time.deltaTime * 100 * acceleration);
+            }
+        }
+    }
+
+    void ZBrake()
+    {
+        rB.AddForce(new Vector3(-rB.velocity.z, 0, 0) * Time.deltaTime * 100 * runSpeed);
+    }
 }
