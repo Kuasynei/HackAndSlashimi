@@ -60,7 +60,11 @@ public class Footsoldier : EnemyClass {
 	void Update ()
     {
         if (commandTick <= 0) commandTick = 1f;
-		commandTick -= Time.deltaTime; 
+		commandTick -= Time.deltaTime;
+
+        if (transform.position.z >= 1)
+            rB.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionZ;
+
 
         //Check distance from the enemy to the player
         distToPlayer = Vector3.Distance(player.transform.position, transform.position);
@@ -69,10 +73,7 @@ public class Footsoldier : EnemyClass {
         distToColossus = Vector3.Distance(playerColossus.transform.position, transform.position);
 
         // ------------------------------------------------------------ AI BEHAVIOUR START ------------------------------------------------------------ //
-		
-
-        //Move them back to the middle lane if they are in front of the player on the Z-axis
-        //@note: They seem to freak out if they are there.
+        
 
         //Move to the layer below if you cant move forward
         if(transform.position.z > 0.5f || transform.position.z < -0.5f)
@@ -82,29 +83,30 @@ public class Footsoldier : EnemyClass {
 
             if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
             {
-                ZMove(angleToMoveDir, MovementMode.March);
+                
 
-                if (debugMode) Debug.Log("Moving back to the right");
+                if (debugMode) Debug.Log("Moving back to the right " + this.name);
             }
         }
         else
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, Vector3.right, out hit, 5.0f))
+            if (Physics.Raycast(transform.position, -Vector3.right, out hit, 5.0f))
             {
-                if (hit.collider.tag == "Enemy")
+                if (hit.collider.tag == "Enemy" && hit.collider.gameObject.GetComponent<Rigidbody>().velocity.magnitude <= 0.5f)
                 {
-                    //&& hit.collider.gameObject.GetComponent<Rigidbody>().velocity.x <= 0.5f
 
                     Vector3 angleToMoveDir = (-transform.right + transform.forward) / 2;
 
-					if (debugMode) Debug.Log("Detected Enemy Infront");
+					if (debugMode) Debug.Log("Detected Enemy Infront " + hit.collider.gameObject.name);
 
                     if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
                     {
-                        ZMove(angleToMoveDir, MovementMode.March);
+                        rB.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-						if (debugMode) Debug.Log("Moving To The Left");
+                        rB.AddForce(new Vector3(0, 0, 100));
+
+						if (debugMode) Debug.Log("Moving To The Left " + this.name);
                     }
                 }
             }
