@@ -75,23 +75,28 @@ public class Footsoldier : EnemyClass {
         // ------------------------------------------------------------ AI BEHAVIOUR START ------------------------------------------------------------ //
         
 
-        //Move to the layer below if you cant move forward
+        //Move back to the forward layer
         if(transform.position.z > 0.5f || transform.position.z < -0.5f)
         {
-            RaycastHit hit;
-            Vector3 angleToMoveDir = (transform.right + transform.forward) / 2;
+            Debug.Log("Is Not In Main Lane");
 
-            if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
+            RaycastHit oHit;
+            Debug.DrawRay(transform.position, -transform.right, Color.red);
+
+            if (!Physics.Raycast(transform.position, -transform.right , out oHit, 100.0f))
             {
-                
+                if (debugMode) Debug.Log("FUCK");
 
-                if (debugMode) Debug.Log("Moving back to the right " + this.name);
+                //rB.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+                //rB.AddForce(new Vector3(0, 0, -150));
             }
         }
+        //Move to the back layer.
         else
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, -Vector3.right, out hit, 5.0f))
+            if (Physics.Raycast(transform.position, transform.forward, out hit, 5.0f))
             {
                 if (hit.collider.tag == "Enemy" && hit.collider.gameObject.GetComponent<Rigidbody>().velocity.magnitude <= 0.5f)
                 {
@@ -100,11 +105,11 @@ public class Footsoldier : EnemyClass {
 
 					if (debugMode) Debug.Log("Detected Enemy Infront " + hit.collider.gameObject.name);
 
-                    if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 5.0f))
+                    if (!Physics.Raycast(transform.position, angleToMoveDir, out hit, 7.0f))
                     {
                         rB.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-                        rB.AddForce(new Vector3(0, 0, 100));
+                        rB.AddForce(new Vector3(0, 0, 150));
 
 						if (debugMode) Debug.Log("Moving To The Left " + this.name);
                     }
