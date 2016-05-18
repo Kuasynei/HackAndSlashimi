@@ -5,12 +5,13 @@ using System.Collections;
 public class MeleeWeaponClass : MonoBehaviour {
 
 	public bool debugMode = true;
-	public float contactDamage; //Damage dealt on contact.
+	protected Collider myColl;
 
 	protected bool contactDeadly = false; //If this is true, the weapon will deal damage on contact.
-	protected float contactDeadlinessTimer = 0; //If this is greater than zero the weapon will deal damage on contact.
 	protected DamageInfo myDamagePackage;
-	protected Collider myColl;
+
+	protected bool contactLaunchy = false; //If this is true, the weapon will launch entities that come into contact.
+	protected Vector3 myLaunchVector = Vector3.zero;
 
 	protected virtual void Awake()
 	{
@@ -19,17 +20,12 @@ public class MeleeWeaponClass : MonoBehaviour {
 
 	protected virtual void FixedUpdate () 
 	{
-		//Makes this weapon deadly for a fixed amount of time.
-		if (contactDeadlinessTimer > 0) 
-		{
-			contactDeadlinessTimer -= Time.fixedDeltaTime;
-		} 
-
-		if ((contactDeadly || contactDeadlinessTimer > 0) && !myColl.enabled)
+		//Turn the collider on and off when needed to increase performance.
+		if ((contactDeadly || contactLaunchy) && !myColl.enabled)
 		{
 			myColl.enabled = true;
 		}
-		else if (!(contactDeadly || contactDeadlinessTimer > 0) && myColl.enabled)
+		else if (!contactDeadly && !contactLaunchy && myColl.enabled)
 		{
 			myColl.enabled = false;
 		}
@@ -43,24 +39,26 @@ public class MeleeWeaponClass : MonoBehaviour {
 		return contactDeadly;
 	}
 
+	//DOES NOT CLEAN THE WEAPON, BEWARE PHANTOM DATA
 	public bool ToggleDeadliness(bool state) 
 	{ 
 		contactDeadly = state;
 		return contactDeadly;
 	}
 
-	//Makes the weapon deadly for a period of time. Returns the time remaining.
-	public float ToggleDeadliness(float timePeriod, DamageInfo damagePackage) 
+	//Set the weapon's ability to launch enemies, returns the end state.
+	public bool ToggleLaunchiness (bool state, Vector3 launchVector)
 	{
-		myDamagePackage = damagePackage;
-		contactDeadlinessTimer = timePeriod;
-		return contactDeadlinessTimer;
+		contactLaunchy = state;
+		myLaunchVector = launchVector;
+		return contactLaunchy;
 	}
 
-	public float ToggleDeadliness(float timePeriod) 
+	//DOES NOT CLEAN THE WEAPON, BEWARE PHANTOM DATA
+	public bool ToggleLaunchiness (bool state)
 	{
-		contactDeadlinessTimer = timePeriod;
-		return contactDeadlinessTimer;
+		contactLaunchy = state;
+		return contactLaunchy;
 	}
 
 	//This fires ticks of deadliness or "ticks of damage" over a period of time. Splits the damage requested over the number of ticks requested.
@@ -87,18 +85,27 @@ public class MeleeWeaponClass : MonoBehaviour {
 
 	void OnTriggerStay(Collider otherColl)
 	{
-		if ((contactDeadly || contactDeadlinessTimer > 0)) 
-		{
-			if (otherColl.GetComponent (typeof(EntityClass))) {
-				EntityClass otherEntity = otherColl.GetComponent (typeof(EntityClass)) as EntityClass;
+		if (otherColl.GetComponent (typeof(EntityClass))) {
+			EntityClass otherEntity = otherColl.GetComponent (typeof(EntityClass)) as EntityClass;
 
+			if (contactDeadly)
+			{
 				float entityHealthRemaining = otherEntity.TakeDamage (myDamagePackage);
 
 				if (debugMode)
 				{
-					Debug.Log(otherColl.name + " has taken " + contactDamage + " damage! Health is now: " + entityHealthRemaining);
+					Debug.Log (otherColl.name + " has taken " + myDamagePackage.damage + " damage from " + myDamagePackage.attacker + ". Health is now: " + entityHealthRemaining);
 				}
+			}
 
+			if (contactLaunchy)
+			{
+				Vector3 launchVectorSent = otherEntity.Launch (myLaunchVector);
+
+				if (debugMode)
+				{
+					Debug.Log (otherColl.name + " has been launched " + launchVectorSent + "! By: " + myDamagePackage.attacker);
+				}
 			}
 		}
 	}

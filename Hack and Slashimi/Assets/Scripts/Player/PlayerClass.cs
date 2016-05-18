@@ -41,6 +41,7 @@ public class PlayerClass : EntityClass
 	float vAxis;
 	//float fire1Axis;
 	bool fire1Down;
+	bool fire2Down;
 
 	//Horizontal Movement
 	bool hMoveEnabled = true;
@@ -105,11 +106,13 @@ public class PlayerClass : EntityClass
 			vAxis = Input.GetAxis ("Vertical");
 			//fire1Axis = Input.GetAxis ("Fire1");
 			fire1Down = Input.GetMouseButtonDown (0);
+			fire2Down = Input.GetMouseButtonDown (1);
 		} else {
 			hAxis = 0;
 			vAxis = 0;
 			//fire1Axis = 0;
 			fire1Down = false;
+			fire2Down = false;
 		}
 
 		if (debugMode) {
@@ -147,12 +150,12 @@ public class PlayerClass : EntityClass
 		////Attack Commands
 		weaponLock -= Time.deltaTime;
 
-		//Fire1Down
-		if (fire1Down && weaponLock <= 0) //You cannot use another attack while in weapon lock.
-		{ 
-			if (myBlade.GetType () == typeof(Sword)) // Weapon Type: Sword
+		if (myBlade.GetType() == typeof(Sword)) // Weapon Type: Sword
+		{
+			if (fire1Down) //Left Mouse Button
 			{ 
-				if (onGround || jumpMercyTimer > 0) //Basic Attack
+				//Basic Attack, can only be used on the ground.
+				if ((onGround || jumpMercyTimer > 0)  && weaponLock <= 0)
 				{
 					float basicAttackDamage = 5;
 					int ticksOfDamage = 2;
@@ -166,10 +169,35 @@ public class PlayerClass : EntityClass
 
 					StartCoroutine (ManualBrake(0.2f, 0.1f, 600));
 
-					DamageInfo basicAttackPackage = new DamageInfo (basicAttackDamage, this.gameObject, faction.goodGuys);
+					DamageInfo basicAttackPackage = new DamageInfo (basicAttackDamage, this.gameObject, myFaction);
 					(myBlade as Sword).BasicAttack (0.1f, 0.1f, ticksOfDamage, basicAttackPackage);
 
 					weaponLock = 0.2f;
+				}
+			}
+			else if (fire2Down) //Right Mouse Button
+			{
+				//Launching Attack, can only be used on the ground.
+				if ((onGround || jumpMercyTimer > 0)  && weaponLock <= 0)
+				{
+					float launchingAttackDamage = 10;
+					float dashSpeed = 15;
+					Vector3 launchVector;
+
+					launchVector = Vector3.up * 7;
+
+					//Brake for a short time.
+					StartCoroutine (ManualBrake(0, 0.3f, 300));
+
+					//Dash in the direction you are facing over the span of 0.4 seconds. Gravity applies.
+					StartCoroutine (Dash (0.3f, 0.4f, Vector3.right * facing * dashSpeed, false)); 
+
+					StartCoroutine (ManualBrake(0.4f, 0.5f, 1000));
+
+					DamageInfo launchingAttackPackage = new DamageInfo (launchingAttackDamage, this.gameObject, myFaction);
+					(myBlade as Sword).LaunchingAttack(0.4f, launchVector, launchingAttackPackage);
+
+					weaponLock = 0.6f;
 				}
 			}
 		}

@@ -60,4 +60,16 @@ public class EntityClass : MonoBehaviour
 	{
 		return myFaction;
 	}
+
+	public virtual Vector3 Launch(Vector3 launchVector)
+	{
+		if (GetComponent<Rigidbody> ())
+		{
+			Rigidbody rB = GetComponent<Rigidbody> ();
+			rB.velocity = launchVector;
+			return launchVector;
+		}
+
+		return Vector3.zero;
+	}
 }
