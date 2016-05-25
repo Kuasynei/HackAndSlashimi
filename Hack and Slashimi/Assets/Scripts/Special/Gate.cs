@@ -13,8 +13,10 @@ public class Gate : EntityClass
 		base.Awake ();
 	}
 
-	void Update()
+	protected override void Update()
 	{
+		base.Update ();
+
 		//Debug.Log(gameObject.name + "'s Health: " + health);
 
 		if(health <= 0)

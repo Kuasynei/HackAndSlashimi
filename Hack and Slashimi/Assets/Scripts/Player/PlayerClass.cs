@@ -33,7 +33,7 @@ public class PlayerClass : EntityClass
 	[Header("Combat")]
 	[SerializeField] float maxHealth = 100;
 	[SerializeField] faction setFaction;
-	[SerializeField] MeleeWeaponClass myBlade;
+	[SerializeField] WeaponClass myBlade;
 
 	////Private Vars
 	//Player Inputs
@@ -57,7 +57,7 @@ public class PlayerClass : EntityClass
 	List<ContactPoint> groundContacts = new List<ContactPoint> ();
 
 	//Combat
-	float weaponLock = 0; //Prevents the player from launching multiple attack commands (or other commands) before the attack finishes.
+	float weaponLock = 0; //Prevents the player from launching multiple attack commands (or other commands) before the attack finishes. This value is set from the weapon in use.
 	bool respawning = false;
 
 	//Rotation
@@ -83,8 +83,10 @@ public class PlayerClass : EntityClass
 		GameManager.SetPlayer (this.gameObject);
 	}
 
-	void Update () 
+	protected override void Update () 
 	{
+		base.Update ();
+
         //The death check is updated with checking if the colossus is alive or not. If it is dead then the game is over.
 		if (health <= 0 && !respawning) 
 		{
@@ -136,12 +138,12 @@ public class PlayerClass : EntityClass
 
 			//HURT YOURSELF BUTTON
 			if (Input.GetKeyDown (KeyCode.H)) {
-				DamageInfo suicidePackage = new DamageInfo (health, this.gameObject, faction.neutral);
+				OmniAttackInfo suicidePackage = new OmniAttackInfo (this.gameObject, global::faction.neutral, health, 0, Vector3.zero);
 				TakeDamage (suicidePackage);
 				Debug.Log ("LIFE did " + health + " damage to " + name + "! " + health + " health remaining.");
 			}
 			if (Input.GetKeyDown (KeyCode.J)) {
-				DamageInfo suicidePackage = new DamageInfo (50, this.gameObject, faction.neutral);
+				OmniAttackInfo suicidePackage = new OmniAttackInfo (this.gameObject, global::faction.neutral, 50, 0, Vector3.zero);
 				TakeDamage (suicidePackage);
 				Debug.Log ("LIFE did " + 50 + " damage to " + name + "! " + health + " health remaining.");
 			}
@@ -150,29 +152,15 @@ public class PlayerClass : EntityClass
 		////Attack Commands
 		weaponLock -= Time.deltaTime;
 
-		if (myBlade.GetType() == typeof(Sword)) // Weapon Type: Sword
+		if (myBlade.GetType() == typeof(Player_Sword)) // Weapon Type: Sword, Values stored on the weapon itself.
 		{
 			if (fire1Down) //Left Mouse Button
 			{ 
 				//Basic Attack, can only be used on the ground.
 				if ((onGround || jumpMercyTimer > 0)  && weaponLock <= 0)
 				{
-					float basicAttackDamage = 5;
-					int ticksOfDamage = 2;
-					float dashSpeed = 15;
-
-					//Brake for a short time.
-					StartCoroutine (ManualBrake(0, 0.1f, 600));
-
-					//Dash in the direction you are facing over the span of 0.4 seconds. Gravity applies.
-					StartCoroutine (Dash (0.1f, 0.1f, Vector3.right * facing * dashSpeed, false)); 
-
-					StartCoroutine (ManualBrake(0.2f, 0.1f, 600));
-
-					DamageInfo basicAttackPackage = new DamageInfo (basicAttackDamage, this.gameObject, myFaction);
-					(myBlade as Sword).BasicAttack (0.1f, 0.1f, ticksOfDamage, basicAttackPackage);
-
-					weaponLock = 0.2f;
+					//Attack Execution
+					(myBlade as Player_Sword).BasicAttack ();
 				}
 			}
 			else if (fire2Down) //Right Mouse Button
@@ -180,24 +168,8 @@ public class PlayerClass : EntityClass
 				//Launching Attack, can only be used on the ground.
 				if ((onGround || jumpMercyTimer > 0)  && weaponLock <= 0)
 				{
-					float launchingAttackDamage = 10;
-					float dashSpeed = 15;
-					Vector3 launchVector;
-
-					launchVector = Vector3.up * 7;
-
-					//Brake for a short time.
-					StartCoroutine (ManualBrake(0, 0.3f, 300));
-
-					//Dash in the direction you are facing over the span of 0.4 seconds. Gravity applies.
-					StartCoroutine (Dash (0.3f, 0.4f, Vector3.right * facing * dashSpeed, false)); 
-
-					StartCoroutine (ManualBrake(0.4f, 0.5f, 1000));
-
-					DamageInfo launchingAttackPackage = new DamageInfo (launchingAttackDamage, this.gameObject, myFaction);
-					(myBlade as Sword).LaunchingAttack(0.4f, launchVector, launchingAttackPackage);
-
-					weaponLock = 0.6f;
+					//Attack Execution
+					(myBlade as Player_Sword).LaunchingAttack ();
 				}
 			}
 		}
@@ -333,11 +305,24 @@ public class PlayerClass : EntityClass
 		}
 	}
 
-	//Other movement options are disabled when dashing. Does not account for dampening and friction.
-	IEnumerator Dash(float delay, float duration, Vector3 dashVector, bool defyGravity)
+	public int GetFacingDirection()
 	{
-		yield return new WaitForSeconds (delay);
+		return facing;
+	}
 
+	public void SetWeaponLock(float INweaponLock)
+	{
+		weaponLock = INweaponLock;
+	}
+
+	public void Dash(float duration, Vector3 dashVector, bool defyGravity)
+	{
+		StartCoroutine (execDash(duration, dashVector, defyGravity));
+	}
+
+	//Other movement options are disabled when dashing. Does not account for dampening and friction.
+	IEnumerator execDash(float duration, Vector3 dashVector, bool defyGravity)
+	{
 		hMoveEnabled = false;
 		jumpEnabled = false;
 		if (defyGravity) rB.useGravity = false;
@@ -351,13 +336,16 @@ public class PlayerClass : EntityClass
 		if (defyGravity) rB.useGravity = true;
 	}
 
+	public void ManualBrake(float duration, float strength)
+	{
+		StartCoroutine (execManualBrake(duration, strength));
+	}
+
 	//Brake strength is capped at 1000, anymore and you'd be going backwards. You must be on the ground to brake.
-	IEnumerator ManualBrake(float delay, float duration, float strength)
+	IEnumerator execManualBrake(float duration, float strength)
 	{
 		if (onGround || jumpMercyTimer > 0)
 		{
-			yield return new WaitForSeconds (delay);
-
 			hMoveEnabled = false;
 			jumpEnabled = false;
 

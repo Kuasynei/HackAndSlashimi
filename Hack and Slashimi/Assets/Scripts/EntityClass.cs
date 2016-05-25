@@ -1,49 +1,66 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
-//An enum and package that we use for TakeDamage() to give the receiver enough information to determine whether or not its their job to get hit.
-//Entities get upset when they take more damage then they signed up for.
+//Used AttackInfo structs to determine what takes damage and what ignores damage.
 public enum faction{goodGuys, badGuys, neutral};
-public struct DamageInfo
+
+//A package that we use for TakeDamage() and TakeCrowdControl() to give the receiver enough information to determine whether or not its their job to get hit.
+public struct OmniAttackInfo
 {
-	public float damage;
 	public GameObject attacker;
 	public faction attackerFaction;
+	public float damage; 
+	public float stunDuration;
+	public Vector3 launchVector;
 
-	public DamageInfo (float INdamage, GameObject INattacker, faction INfaction)
+	public OmniAttackInfo (GameObject INattacker, faction INfaction, float INdamage, float INstunDuration, Vector3 INlaunchVector)
 	{
-		damage = INdamage;
 		attacker = INattacker;
 		attackerFaction = INfaction;
+		damage = INdamage;
+		stunDuration = INstunDuration;
+		launchVector = INlaunchVector;
 	}
-}
+};
 
 public class EntityClass : MonoBehaviour 
 {
 	protected float maxH = 1;
 	protected float health = 1;
-	protected faction myFaction = faction.neutral;
+	protected float stun = 0;
+	protected faction myFaction = global::faction.neutral;
 
 	protected virtual void Awake()
 	{
 		health = maxH;
 	}
 
-	protected virtual void Start()
+	protected virtual void Start() { }
+
+	protected virtual void Update()
 	{
-		
+		if (stun > 0)
+			stun -= Time.deltaTime;
 	}
 
-	public virtual float TakeDamage(DamageInfo damagePackage) 
+	public virtual float TakeDamage(OmniAttackInfo omniPackage) 
 	{
-		if(damagePackage.attackerFaction != myFaction || damagePackage.attackerFaction == faction.neutral)
+		if(omniPackage.attackerFaction != myFaction || omniPackage.attackerFaction == global::faction.neutral)
         {
-			health -= damagePackage.damage;
+			health -= omniPackage.damage;
         }
 
         return health;
     }
+
+	public virtual void TakeCrowdControl(OmniAttackInfo omniPackage)
+	{
+		if (omniPackage.attackerFaction != myFaction || omniPackage.attackerFaction == global::faction.neutral)
+		{
+			Launch (omniPackage.launchVector);
+			stun = omniPackage.stunDuration;
+		}
+	}
 
 	public virtual float Heal(float heal) 
 	{
@@ -56,20 +73,21 @@ public class EntityClass : MonoBehaviour
 		return health;
 	}
 
-	public faction GetFaction()
-	{
-		return myFaction;
-	}
-
-	public virtual Vector3 Launch(Vector3 launchVector)
+	public virtual Vector3 Launch(Vector3 INlaunchVector)
 	{
 		if (GetComponent<Rigidbody> ())
 		{
 			Rigidbody rB = GetComponent<Rigidbody> ();
-			rB.velocity = launchVector;
-			return launchVector;
+			rB.velocity = INlaunchVector;
+			return INlaunchVector;
 		}
 
 		return Vector3.zero;
+	}
+
+
+	public faction GetFaction()
+	{
+		return myFaction;
 	}
 }

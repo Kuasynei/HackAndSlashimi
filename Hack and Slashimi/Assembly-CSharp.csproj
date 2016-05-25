@@ -52,19 +52,21 @@
      <Compile Include="Assets\Scripts\Enemy\Enemy Spawning\EnemyPool.cs" />
      <Compile Include="Assets\Scripts\Enemy\Enemy Spawning\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\Enemy\Footsoldier.cs" />
+     <Compile Include="Assets\Scripts\Enemy\Footsoldier_BasicAxe.cs" />
      <Compile Include="Assets\Scripts\EnemyClass.cs" />
      <Compile Include="Assets\Scripts\EntityClass.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
-     <Compile Include="Assets\Scripts\MeleeWeaponClass.cs" />
      <Compile Include="Assets\Scripts\MenuController.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerClass.cs" />
-     <Compile Include="Assets\Scripts\Player\Sword.cs" />
+     <Compile Include="Assets\Scripts\Player\Player_Sword.cs" />
      <Compile Include="Assets\Scripts\Special\Colossus.cs" />
      <Compile Include="Assets\Scripts\Special\EnemyColossus.cs" />
      <Compile Include="Assets\Scripts\Special\Gate.cs" />
      <Compile Include="Assets\Scripts\Special\HealthPickup.cs" />
      <Compile Include="Assets\Scripts\Utility\CoroutineWithData.cs" />
+     <Compile Include="Assets\Scripts\Utility\ExtendedChildCollider.cs" />
      <Compile Include="Assets\Scripts\Utility\SetPositionTo.cs" />
+     <Compile Include="Assets\Scripts\WeaponClass.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

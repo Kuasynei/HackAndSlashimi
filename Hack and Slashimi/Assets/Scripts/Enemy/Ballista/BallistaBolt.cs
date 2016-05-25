@@ -6,7 +6,7 @@ public class BallistaBolt : MonoBehaviour {
 
 	[SerializeField] float impaleTime;
 	Rigidbody rB;
-	DamageInfo myDamagePackage;
+	OmniAttackInfo myDamagePackage;
 
 	void Awake() 
 	{
@@ -43,7 +43,7 @@ public class BallistaBolt : MonoBehaviour {
 		transform.SetParent (otherColl.transform);
 	}
 
-	public void giveDamagePackage(DamageInfo damagePackage)
+	public void giveDamagePackage(OmniAttackInfo damagePackage)
 	{
 		myDamagePackage = damagePackage;
 	}

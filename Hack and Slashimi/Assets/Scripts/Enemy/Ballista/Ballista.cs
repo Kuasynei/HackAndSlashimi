@@ -5,7 +5,7 @@ public class Ballista : EnemyClass {
 
 	[Header("Main")]
 	[SerializeField] bool debugMode = true;
-	[SerializeField] faction setFaction = faction.neutral;
+	[SerializeField] faction setFaction;
 	[SerializeField] GameObject bolt;
 	[SerializeField] Transform boltSpawnPoint;
 
@@ -34,8 +34,10 @@ public class Ballista : EnemyClass {
 		base.Awake ();
 	}
 
-	void Update()
+	protected override void Update()
 	{
+		base.Update ();
+
 		if (fireCooldown > 0)
 			fireCooldown -= Time.deltaTime;
 
@@ -70,7 +72,7 @@ public class Ballista : EnemyClass {
 		newBolt.transform.SetParent (transform);
 
 		//Giving the bolt a damage package to carry with them.
-		DamageInfo fromParisWithlove = new DamageInfo(damagePerShot, this.gameObject, myFaction);
+		OmniAttackInfo fromParisWithlove = new OmniAttackInfo(this.gameObject, myFaction, damagePerShot, 0, Vector3.zero);
 		newBolt.GetComponent<BallistaBolt> ().giveDamagePackage (fromParisWithlove);
 
 		while ((Time.time - timeFrame) < 2)

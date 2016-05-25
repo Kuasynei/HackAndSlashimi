@@ -6,7 +6,7 @@ public class Footsoldier : EnemyClass {
 	[Header("Main")]
 	public bool debugMode = true;
 	[SerializeField] GameObject healthOrb;
-    [SerializeField] MeleeWeaponClass enemyWeapon;
+    [SerializeField] WeaponClass enemyWeapon;
 
 	[Header("Movement")]
 	[SerializeField] float runSpeed = 4;
@@ -18,10 +18,10 @@ public class Footsoldier : EnemyClass {
 	[SerializeField] float maxHealth;
 	[SerializeField] float basicAttackDamage = 10;
 	[SerializeField] int rngDropPercent = 30;
-	[SerializeField] faction setFaction = faction.badGuys;
+	[SerializeField] faction setFaction = global::faction.neutral;
 
     //THIS WILL BE CHANGED TO AXE
-    private Sword enemySword;
+	private Footsoldier_BasicAxe enemySword;
 	private GameObject player;
 	private GameObject playerColossus;
 	private Rigidbody rB;
@@ -41,11 +41,9 @@ public class Footsoldier : EnemyClass {
 		base.Awake ();
 
 		//Store the character controller and the enemy sword/weapon
-		enemySword = enemyWeapon as Sword;
+		enemySword = enemyWeapon as Footsoldier_BasicAxe;
 
 		myFaction = setFaction;
-		player = GameManager.GetPlayer ();
-		playerColossus = GameManager.GetPColossus();
 		rB = GetComponent <Rigidbody> ();
 	}
 
@@ -53,12 +51,17 @@ public class Footsoldier : EnemyClass {
 	protected override void Start () 
     {
 		base.Start ();
+
+		player = GameManager.GetPlayer ();
+		playerColossus = GameManager.GetPColossus();
 		commandTick = Random.value; //Staggers commandTicks for all AI so they don't look like robits.
 	}
 	
 	// Update is called once per frame
-	void Update ()
+	protected override void Update ()
     {
+		base.Update ();
+
         if (commandTick <= 0) commandTick = 1f;
 		commandTick -= Time.deltaTime;
 
@@ -146,8 +149,8 @@ public class Footsoldier : EnemyClass {
 				if (weaponLock <= 0)
 				{
 					//...and smack the colossus
-					DamageInfo orcDamagePackage = new DamageInfo(basicAttackDamage, this.gameObject, myFaction);
-					enemySword.BasicAttack (0.4f, 1, orcDamagePackage);
+					OmniAttackInfo orcDamagePackage = new OmniAttackInfo(this.gameObject, myFaction, basicAttackDamage, 0, Vector3.zero);
+					enemySword.BasicAttack (0.4f, 0.1f, 1, orcDamagePackage);
 					weaponLock = 1.0f;
 
 					//Stop and look at the colossus
@@ -189,9 +192,9 @@ public class Footsoldier : EnemyClass {
 				XBrake ();
                 if(weaponLock <= 0)
                 {
-					DamageInfo orcDamagePackage = new DamageInfo(basicAttackDamage, this.gameObject, myFaction);
-					enemySword.BasicAttack (0.4f, 1, orcDamagePackage);
-                    weaponLock = 1.0f;
+					OmniAttackInfo orcDamagePackage = new OmniAttackInfo(this.gameObject, myFaction, basicAttackDamage, 0, Vector3.zero);
+					enemySword.BasicAttack (0.4f, 0.1f, 1, orcDamagePackage);
+                    weaponLock = 1.2f;
                 }
             }
         }

@@ -31,8 +31,10 @@ public class Colossus : EntityClass
 		GameManager.SetPColossus (this.gameObject);
 	}
 
-	void Update()
+	protected override void Update()
 	{
+		base.Update ();
+
 		//UI STUFF
 		if (uI_HP != null)
 			uI_HP.text = Mathf.Round(health).ToString();
@@ -74,7 +76,7 @@ public class Colossus : EntityClass
                     {
                         gateScript = (Gate)hit.collider.GetComponent("Gate");
 
-						DamageInfo breakTheGatePackage = new DamageInfo (damage, this.gameObject, faction.goodGuys);
+						OmniAttackInfo breakTheGatePackage = new OmniAttackInfo (this.gameObject, global::faction.goodGuys, damage, 0, Vector3.zero);
 						float gateHealth = gateScript.TakeDamage(breakTheGatePackage);
                         timeSinceLastHit = 0;
                         Debug.DrawLine(transform.position, hit.point, Color.red, .3f);
@@ -100,7 +102,7 @@ public class Colossus : EntityClass
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            DamageInfo suicidePackage = new DamageInfo(1, this.gameObject, faction.neutral);
+			OmniAttackInfo suicidePackage = new OmniAttackInfo(this.gameObject, global::faction.neutral, 1, 0, Vector3.zero);
             TakeDamage(suicidePackage);
             Debug.Log("LIFE did " + health + " damage to " + name + "! " + health + " health remaining.");
         }
